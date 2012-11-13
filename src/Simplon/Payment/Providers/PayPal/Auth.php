@@ -5,13 +5,16 @@
   class Auth
   {
     /** @var String */
-    protected $_apiUsername;
+    protected $_username;
 
     /** @var String */
-    protected $_apiPassword;
+    protected $_password;
 
     /** @var String */
-    protected $_apiSignature;
+    protected $_signature;
+
+    /** @var bool */
+    protected $_sandboxMode = FALSE;
 
     // ##########################################
 
@@ -31,7 +34,7 @@
      */
     public function setPassword($apiPassword)
     {
-      $this->_apiPassword = $apiPassword;
+      $this->_password = $apiPassword;
 
       return $this;
     }
@@ -41,9 +44,9 @@
     /**
      * @return String
      */
-    public function getApiPassword()
+    public function getPassword()
     {
-      return $this->_apiPassword;
+      return $this->_password;
     }
 
     // ##########################################
@@ -54,7 +57,7 @@
      */
     public function setSignature($apiSignature)
     {
-      $this->_apiSignature = $apiSignature;
+      $this->_signature = $apiSignature;
 
       return $this;
     }
@@ -64,9 +67,9 @@
     /**
      * @return String
      */
-    public function getApiSignature()
+    public function getSignature()
     {
-      return $this->_apiSignature;
+      return $this->_signature;
     }
 
     // ##########################################
@@ -77,7 +80,7 @@
      */
     public function setUsername($apiUsername)
     {
-      $this->_apiUsername = $apiUsername;
+      $this->_username = $apiUsername;
 
       return $this;
     }
@@ -87,8 +90,31 @@
     /**
      * @return String
      */
-    public function getApiUsername()
+    public function getUsername()
     {
-      return $this->_apiUsername;
+      return $this->_username;
+    }
+
+    // ##########################################
+
+    /**
+     * @param bool $bool
+     * @return Auth
+     */
+    public function setSandboxMode($bool = FALSE)
+    {
+      $this->_sandboxMode = $bool !== FALSE ? TRUE : FALSE;
+
+      return $this;
+    }
+
+    // ##########################################
+
+    /**
+     * @return bool
+     */
+    public function isSandboxMode()
+    {
+      return $this->_sandboxMode;
     }
   }

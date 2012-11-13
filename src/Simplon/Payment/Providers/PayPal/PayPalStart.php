@@ -2,17 +2,8 @@
 
   namespace Simplon\Payment\Providers\PayPal;
 
-  class PayPal
+  class PayPalStart extends PayPalBase
   {
-    /** @var Auth */
-    protected $_authInstance;
-
-    /** @var bool */
-    protected $_sandboxMode = FALSE;
-
-    /** @var string */
-    protected $_apiVersion = '94.0'; // https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl
-
     /** @var string */
     protected $_paymentAction = 'Sale';
 
@@ -53,12 +44,6 @@
     protected $_urlCancel;
 
     /** @var string */
-    protected $_urlGetCheckoutTokenSandbox = 'https://api-3t.sandbox.paypal.com/nvp';
-
-    /** @var string */
-    protected $_urlGetCheckoutToken = 'https://api-3t.paypal.com/nvp';
-
-    /** @var string */
     protected $_urlPayPalLogin = 'https://www.sandbox.paypal.com/cgi-bin/webscr?';
 
     /** @var null */
@@ -97,129 +82,11 @@
     /** @var bool */
     protected $_isCommitOnPayPal = FALSE;
 
-    /** @var string */
-    protected $_checkoutToken;
-
-    // ##########################################
-
-    public function __construct(Auth $authInstance)
-    {
-      $this->_setAuth($authInstance);
-    }
-
-    // ##########################################
-
-    /**
-     * @param $message
-     * @throws \Exception
-     */
-    protected function _throwException($message)
-    {
-      throw new \Exception(__NAMESPACE__ . '\\' . __CLASS__ . ': ' . $message, 500);
-    }
-
-    // ##########################################
-
-    /**
-     * @param $authClass
-     * @return PayPal
-     */
-    protected function _setAuth(Auth $authClass)
-    {
-      $this->_authInstance = $authClass;
-
-      return $this;
-    }
-
-    // ##########################################
-
-    /**
-     * @return Auth
-     */
-    protected function _getAuthInstance()
-    {
-      $auth = $this->_authInstance;
-
-      if(! isset($auth))
-      {
-        $this->_throwException('Missing authentication credentials.');
-      }
-
-      return $auth;
-    }
-
-    // ##########################################
-
-    /**
-     * @return \CURL
-     */
-    protected function _getCurlClass()
-    {
-      return new \CURL();
-    }
-
-    // ##########################################
-
-    /**
-     * @param $number
-     * @return float
-     */
-    protected function _roundNumber($number)
-    {
-      return round($number, 2);
-    }
-
-    // ##########################################
-
-    /**
-     * @param $version
-     * @return PayPal
-     */
-    public function setApiVersion($version)
-    {
-      $this->_apiVersion = $version;
-
-      return $this;
-    }
-
-    // ##########################################
-
-    /**
-     * @return string
-     */
-    protected function _getApiVersion()
-    {
-      return $this->_apiVersion;
-    }
-
-    // ##########################################
-
-    /**
-     * @param bool $bool
-     * @return PayPal
-     */
-    public function enableSandboxMode($bool = FALSE)
-    {
-      $this->_sandboxMode = $bool !== FALSE ? TRUE : FALSE;
-
-      return $this;
-    }
-
-    // ##########################################
-
-    /**
-     * @return bool
-     */
-    protected function _isSandboxMode()
-    {
-      return $this->_sandboxMode;
-    }
-
     // ##########################################
 
     /**
      * @param $action
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setPaymentAction($action)
     {
@@ -242,7 +109,7 @@
 
     /**
      * @param $bool
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setCommitOnPayPal($bool)
     {
@@ -265,7 +132,7 @@
 
     /**
      * @param $code
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setCurrencyCode($code)
     {
@@ -288,7 +155,7 @@
 
     /**
      * @param $code
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setLocaleCode($code)
     {
@@ -318,7 +185,7 @@
 
     /**
      * @param $url
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setUrlSuccess($url)
     {
@@ -341,7 +208,7 @@
 
     /**
      * @param $url
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setUrlCancel($url)
     {
@@ -365,21 +232,6 @@
     /**
      * @return string
      */
-    protected function _getUrlGetCheckoutToken()
-    {
-      if($this->_isSandboxMode())
-      {
-        return $this->_urlGetCheckoutTokenSandbox;
-      }
-
-      return $this->_urlGetCheckoutToken;
-    }
-
-    // ##########################################
-
-    /**
-     * @return string
-     */
     protected function _getUrlPayPalLogin()
     {
       return $this->_urlPayPalLogin;
@@ -389,7 +241,7 @@
 
     /**
      * @param $pageStyleName
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setPageStyle($pageStyleName)
     {
@@ -412,7 +264,7 @@
 
     /**
      * @param $url
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setCustomLogoImage($url)
     {
@@ -435,7 +287,7 @@
 
     /**
      * @param $hexColor
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setCustomBorderColor($hexColor)
     {
@@ -458,7 +310,7 @@
 
     /**
      * @param $items
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setOrderItemsMany($items)
     {
@@ -471,7 +323,7 @@
 
     /**
      * @param Item $item
-     * @return PayPal
+     * @return PayPalStart
      */
     public function addOrderItem(Item $item)
     {
@@ -534,7 +386,7 @@
 
     /**
      * @param $preparedItem
-     * @return PayPal
+     * @return PayPalStart
      */
     protected function _addPreparedOrderItem($preparedItem)
     {
@@ -558,7 +410,7 @@
     /**
      * @param $itemPrice
      * @param $quantity
-     * @return PayPal
+     * @return PayPalStart
      */
     protected function _addOrderItemsSubTotal($itemPrice, $quantity)
     {
@@ -583,7 +435,7 @@
      * @param $itemPrice
      * @param $quantity
      * @param $taxPercentage
-     * @return PayPal
+     * @return PayPalStart
      */
     protected function _addOrderItemsTaxTotal($itemPrice, $quantity, $taxPercentage)
     {
@@ -607,7 +459,7 @@
 
     /**
      * @param $bool
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setNoShipping($bool = FALSE)
     {
@@ -630,7 +482,7 @@
 
     /**
      * @param $cost
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setShippingAmount($cost)
     {
@@ -653,7 +505,7 @@
 
     /**
      * @param $cost
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setShippingDiscount($cost)
     {
@@ -676,7 +528,7 @@
 
     /**
      * @param $cost
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setHandlingAmount($cost)
     {
@@ -699,7 +551,7 @@
 
     /**
      * @param $cost
-     * @return PayPal
+     * @return PayPalStart
      */
     public function setInsuranceAmount($cost)
     {
@@ -763,52 +615,7 @@
     // ##########################################
 
     /**
-     * @param $token
-     * @return PayPal
-     */
-    protected function _setCheckoutToken($token)
-    {
-      if(empty($token))
-      {
-        $this->_throwException('setCheckoutToken failed due to empty token.');
-      }
-
-      $this->_checkoutToken = $token;
-
-      return $this;
-    }
-
-    // ##########################################
-
-    /**
-     * @return string
-     */
-    public function getCheckoutToken()
-    {
-      return $this->_checkoutToken;
-    }
-
-    // ##########################################
-
-    /**
-     * @return array
-     */
-    protected function _getAuthCredentials()
-    {
-      $authClass = $this->_getAuthInstance();
-
-      return array(
-        'USER'      => $authClass->getApiUsername(),
-        'PWD'       => $authClass->getApiPassword(),
-        'SIGNATURE' => $authClass->getApiSignature(),
-        'VERSION'   => $this->_getApiVersion(),
-      );
-    }
-
-    // ##########################################
-
-    /**
-     * @return PayPal
+     * @return PayPalStart
      */
     public function requestCheckoutToken()
     {
@@ -865,7 +672,7 @@
 
       // get token from paypal
       $token = $this->_requestCheckoutToken($postData);
-      $this->_setCheckoutToken($token);
+      $this->setCheckoutToken($token);
 
       return $this;
     }
@@ -884,7 +691,7 @@
       // call paypal
       $response = $this
         ->_getCurlClass()
-        ->init($this->_getUrlGetCheckoutToken())
+        ->init($this->_getUrlApi())
         ->setPost(TRUE)
         ->setPostFields($postDataQuery)
         ->setReturnTransfer(TRUE)
@@ -901,118 +708,5 @@
 
       // all cool; return token
       return $tokenResponseVo->getToken();
-    }
-
-    // ##########################################
-
-    /**
-     * @param $checkoutToken
-     * @return Vo\DetailsResponseVo
-     */
-    public function requestCheckoutDetails($checkoutToken)
-    {
-      // set post data
-      $postData = array(
-        'METHOD' => 'GetExpressCheckoutDetails',
-        'TOKEN'  => $checkoutToken,
-      );
-
-      // add auth credentials
-      $authCredentials = $this->_getAuthCredentials();
-      $postData = array_merge($postData, $authCredentials);
-
-      return $this->_requestCheckoutDetails($postData);
-    }
-
-    // ##########################################
-
-    /**
-     * @param $postData
-     * @return Vo\DetailsResponseVo
-     */
-    protected function _requestCheckoutDetails($postData)
-    {
-      // build query string
-      $postDataQuery = http_build_query($postData);
-
-      // call paypal
-      $response = $this
-        ->_getCurlClass()
-        ->init($this->_getUrlGetCheckoutToken())
-        ->setPost(TRUE)
-        ->setPostFields($postDataQuery)
-        ->setReturnTransfer(TRUE)
-        ->execute();
-
-      /** @var $detailsResponseVo \Simplon\Payment\Providers\PayPal\Vo\DetailsResponseVo */
-      $detailsResponseVo = \Simplon\Payment\Providers\PayPal\Vo\DetailsResponseVo::init($response);
-
-      // throw exception on fail
-      if($detailsResponseVo->isSuccess() === FALSE)
-      {
-        $this->_throwException('requestCheckoutDetails failed with errors: ' . $detailsResponseVo->getErrors());
-      }
-
-      // all cool; return token
-      return $detailsResponseVo;
-    }
-
-    // ##########################################
-
-    /**
-     * @param $checkoutToken
-     * @param $payerId
-     * @param $orderAmount
-     * @return Vo\PaymentResponseVo
-     */
-    public function requestCheckoutPayment($checkoutToken, $payerId, $orderAmount)
-    {
-      // set post data
-      $postData = array(
-        'METHOD'                         => 'DoExpressCheckoutPayment',
-        'PAYMENTREQUEST_0_PAYMENTACTION' => 'Authorization',
-        'TOKEN'                          => $checkoutToken,
-        'PAYERID'                        => $payerId,
-        'PAYMENTREQUEST_0_AMT'           => $orderAmount,
-      );
-
-      // add auth credentials
-      $authCredentials = $this->_getAuthCredentials();
-      $postData = array_merge($postData, $authCredentials);
-
-      return $this->_requestCheckoutPayment($postData);
-    }
-
-    // ##########################################
-
-    /**
-     * @param $postData
-     * @return Vo\PaymentResponseVo
-     */
-    protected function _requestCheckoutPayment($postData)
-    {
-      // build query string
-      $postDataQuery = http_build_query($postData);
-
-      // call paypal
-      $response = $this
-        ->_getCurlClass()
-        ->init($this->_getUrlGetCheckoutToken())
-        ->setPost(TRUE)
-        ->setPostFields($postDataQuery)
-        ->setReturnTransfer(TRUE)
-        ->execute();
-
-      /** @var $paymentResponseVo \Simplon\Payment\Providers\PayPal\Vo\PaymentResponseVo */
-      $paymentResponseVo = \Simplon\Payment\Providers\PayPal\Vo\PaymentResponseVo::init($response);
-
-      // throw exception on fail
-      if($paymentResponseVo->isSuccess() === FALSE)
-      {
-        $this->_throwException('requestCheckoutPayment failed with errors: ' . $paymentResponseVo->getErrors());
-      }
-
-      // all cool; return token
-      return $paymentResponseVo;
     }
   }
