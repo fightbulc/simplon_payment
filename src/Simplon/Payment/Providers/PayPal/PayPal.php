@@ -5,7 +5,7 @@
   class PayPal
   {
     /** @var Auth */
-    protected $_authClass;
+    protected $_authInstance;
 
     /** @var bool */
     protected $_sandboxMode = FALSE;
@@ -97,47 +97,14 @@
     /** @var bool */
     protected $_isCommitOnPayPal = FALSE;
 
-    // ##########################################
-
-    /**
-     * @param Auth $authClass
-     */
-    public function __construct(Auth $authClass)
-    {
-      $this->_setAuthClass($authClass);
-    }
+    /** @var string */
+    protected $_checkoutToken;
 
     // ##########################################
 
-    /**
-     * @param $authClass
-     * @return PayPal
-     */
-    protected function _setAuthClass($authClass)
+    public function __construct(Auth $authInstance)
     {
-      $this->_authClass = $authClass;
-
-      return $this;
-    }
-
-    // ##########################################
-
-    /**
-     * @return Auth
-     */
-    protected function _getAuthClass()
-    {
-      return $this->_authClass;
-    }
-
-    // ##########################################
-
-    /**
-     * @return \CURL
-     */
-    protected function _getCurlClass()
-    {
-      return new \CURL();
+      $this->_setAuth($authInstance);
     }
 
     // ##########################################
@@ -149,6 +116,46 @@
     protected function _throwException($message)
     {
       throw new \Exception(__NAMESPACE__ . '\\' . __CLASS__ . ': ' . $message, 500);
+    }
+
+    // ##########################################
+
+    /**
+     * @param $authClass
+     * @return PayPal
+     */
+    protected function _setAuth(Auth $authClass)
+    {
+      $this->_authInstance = $authClass;
+
+      return $this;
+    }
+
+    // ##########################################
+
+    /**
+     * @return Auth
+     */
+    protected function _getAuthInstance()
+    {
+      $auth = $this->_authInstance;
+
+      if(! isset($auth))
+      {
+        $this->_throwException('Missing authentication credentials.');
+      }
+
+      return $auth;
+    }
+
+    // ##########################################
+
+    /**
+     * @return \CURL
+     */
+    protected function _getCurlClass()
+    {
+      return new \CURL();
     }
 
     // ##########################################
@@ -731,14 +738,13 @@
     // ##########################################
 
     /**
-     * @param $checkoutToken
      * @return string
      */
-    public function getPreparedUrlPayPalLogin($checkoutToken)
+    public function getUrlPayPalLogin()
     {
       $data = array(
         'cmd'   => '_express-checkout',
-        'token' => $checkoutToken,
+        'token' => $this->getCheckoutToken(),
       );
 
       // complete order on paypal?
@@ -757,11 +763,39 @@
     // ##########################################
 
     /**
+     * @param $token
+     * @return PayPal
+     */
+    protected function _setCheckoutToken($token)
+    {
+      if(empty($token))
+      {
+        $this->_throwException('setCheckoutToken failed due to empty token.');
+      }
+
+      $this->_checkoutToken = $token;
+
+      return $this;
+    }
+
+    // ##########################################
+
+    /**
+     * @return string
+     */
+    public function getCheckoutToken()
+    {
+      return $this->_checkoutToken;
+    }
+
+    // ##########################################
+
+    /**
      * @return array
      */
     protected function _getAuthCredentials()
     {
-      $authClass = $this->_getAuthClass();
+      $authClass = $this->_getAuthInstance();
 
       return array(
         'USER'      => $authClass->getApiUsername(),
@@ -774,9 +808,9 @@
     // ##########################################
 
     /**
-     * @return bool|mixed
+     * @return PayPal
      */
-    public function getCheckoutToken()
+    public function requestCheckoutToken()
     {
       // prepare item data
       $this->_prepareOrderItems();
@@ -830,7 +864,10 @@
       $postData = array_merge($postData, $authCredentials);
 
       // get token from paypal
-      return $this->_getCheckoutToken($postData);
+      $token = $this->_requestCheckoutToken($postData);
+      $this->_setCheckoutToken($token);
+
+      return $this;
     }
 
     // ##########################################
@@ -839,7 +876,7 @@
      * @param $postData
      * @return bool|mixed
      */
-    protected function _getCheckoutToken($postData)
+    protected function _requestCheckoutToken($postData)
     {
       // build query string
       $postDataQuery = http_build_query($postData);
@@ -859,7 +896,7 @@
       // throw exception on fail
       if($tokenResponseVo->isSuccess() === FALSE)
       {
-        $this->_throwException('getCheckoutToken failed with errors: ' . $tokenResponseVo->getErrors());
+        $this->_throwException('requestCheckoutToken failed with errors: ' . $tokenResponseVo->getErrors());
       }
 
       // all cool; return token
@@ -872,7 +909,7 @@
      * @param $checkoutToken
      * @return Vo\DetailsResponseVo
      */
-    public function getCheckoutDetails($checkoutToken)
+    public function requestCheckoutDetails($checkoutToken)
     {
       // set post data
       $postData = array(
@@ -884,7 +921,7 @@
       $authCredentials = $this->_getAuthCredentials();
       $postData = array_merge($postData, $authCredentials);
 
-      return $this->_getCheckoutDetails($postData);
+      return $this->_requestCheckoutDetails($postData);
     }
 
     // ##########################################
@@ -893,7 +930,7 @@
      * @param $postData
      * @return Vo\DetailsResponseVo
      */
-    protected function _getCheckoutDetails($postData)
+    protected function _requestCheckoutDetails($postData)
     {
       // build query string
       $postDataQuery = http_build_query($postData);
@@ -913,7 +950,7 @@
       // throw exception on fail
       if($detailsResponseVo->isSuccess() === FALSE)
       {
-        $this->_throwException('getCheckoutDetails failed with errors: ' . $detailsResponseVo->getErrors());
+        $this->_throwException('requestCheckoutDetails failed with errors: ' . $detailsResponseVo->getErrors());
       }
 
       // all cool; return token
@@ -928,7 +965,7 @@
      * @param $orderAmount
      * @return Vo\PaymentResponseVo
      */
-    public function doCheckoutPayment($checkoutToken, $payerId, $orderAmount)
+    public function requestCheckoutPayment($checkoutToken, $payerId, $orderAmount)
     {
       // set post data
       $postData = array(
@@ -943,7 +980,7 @@
       $authCredentials = $this->_getAuthCredentials();
       $postData = array_merge($postData, $authCredentials);
 
-      return $this->_doCheckoutPayment($postData);
+      return $this->_requestCheckoutPayment($postData);
     }
 
     // ##########################################
@@ -952,7 +989,7 @@
      * @param $postData
      * @return Vo\PaymentResponseVo
      */
-    protected function _doCheckoutPayment($postData)
+    protected function _requestCheckoutPayment($postData)
     {
       // build query string
       $postDataQuery = http_build_query($postData);
@@ -972,7 +1009,7 @@
       // throw exception on fail
       if($paymentResponseVo->isSuccess() === FALSE)
       {
-        $this->_throwException('doCheckoutPayment failed with errors: ' . $paymentResponseVo->getErrors());
+        $this->_throwException('requestCheckoutPayment failed with errors: ' . $paymentResponseVo->getErrors());
       }
 
       // all cool; return token
