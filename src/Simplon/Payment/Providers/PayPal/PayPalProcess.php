@@ -122,11 +122,11 @@
 
       // set post data
       $postData = array(
-        'METHOD'                         => 'DoExpressCheckoutPayment',
-        'PAYMENTREQUEST_0_PAYMENTACTION' => 'Authorization',
-        'TOKEN'                          => $this->getCheckoutToken(),
-        'PAYERID'                        => $detailsVo->getPayerId(),
-        'PAYMENTREQUEST_0_AMT'           => $detailsVo->getOrderAmount(),
+        'METHOD'        => 'DoExpressCheckoutPayment',
+        'PAYMENTACTION' => 'Sale',
+        'TOKEN'         => $this->getCheckoutToken(),
+        'PAYERID'       => $detailsVo->getPayerId(),
+        'AMT'           => $detailsVo->getOrderAmount(),
       );
 
       // add auth credentials
