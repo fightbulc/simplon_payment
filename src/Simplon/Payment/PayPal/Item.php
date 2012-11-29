@@ -1,6 +1,6 @@
 <?php
 
-  namespace Simplon\Payment\Providers\PayPal;
+  namespace Simplon\Payment\PayPal;
 
   class Item
   {

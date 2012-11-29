@@ -1,13 +1,16 @@
 <?php
 
-  namespace Simplon\Payment\Providers\PayPal;
+  namespace Simplon\Payment\PayPal;
+
+  use Simplon\Payment\PayPal\Vo\PaymentResponseVo;
+  use Simplon\Payment\PayPal\Vo\DetailsResponseVo;
 
   class PayPalProcess extends PayPalBase
   {
-    /** @var \Simplon\Payment\Providers\PayPal\Vo\DetailsResponseVo */
+    /** @var \Simplon\Payment\PayPal\Vo\DetailsResponseVo */
     protected $_detailsResponseVo;
 
-    /** @var \Simplon\Payment\Providers\PayPal\Vo\PaymentResponseVo */
+    /** @var \Simplon\Payment\PayPal\Vo\PaymentResponseVo */
     protected $_paymentResponseVo;
 
     // ##########################################
@@ -26,11 +29,16 @@
     // ##########################################
 
     /**
-     * @return Vo\DetailsResponseVo
+     * @return bool|Vo\DetailsResponseVo
      */
     public function getDetailsResponseVo()
     {
-      return $this->_detailsResponseVo;
+      if(isset($this->_detailsResponseVo))
+      {
+        return $this->_detailsResponseVo;
+      }
+
+      return FALSE;
     }
 
     // ##########################################
@@ -49,17 +57,22 @@
     // ##########################################
 
     /**
-     * @return Vo\PaymentResponseVo
+     * @return bool|Vo\PaymentResponseVo
      */
     public function getPaymentResponseVo()
     {
-      return $this->_paymentResponseVo;
+      if(isset($this->_paymentResponseVo))
+      {
+        return $this->_paymentResponseVo;
+      }
+
+      return FALSE;
     }
 
     // ##########################################
 
     /**
-     * @return Vo\DetailsResponseVo
+     * @return PayPalProcess
      */
     public function requestCheckoutDetails()
     {
@@ -73,7 +86,10 @@
       $authCredentials = $this->_getAuthCredentials();
       $postData = array_merge($postData, $authCredentials);
 
-      return $this->_requestCheckoutDetails($postData);
+      // request details
+      $this->_requestCheckoutDetails($postData);
+
+      return $this;
     }
 
     // ##########################################
@@ -96,8 +112,8 @@
         ->setReturnTransfer(TRUE)
         ->execute();
 
-      /** @var $detailsResponseVo \Simplon\Payment\Providers\PayPal\Vo\DetailsResponseVo */
-      $detailsResponseVo = \Simplon\Payment\Providers\PayPal\Vo\DetailsResponseVo::init($response);
+      /** @var $detailsResponseVo DetailsResponseVo */
+      $detailsResponseVo = DetailsResponseVo::init($response);
 
       // throw exception on fail
       if($detailsResponseVo->isSuccess() === FALSE)
@@ -114,19 +130,19 @@
     // ##########################################
 
     /**
+     * @param $payerId
+     * @param $orderAmount
      * @return PayPalProcess
      */
-    public function requestCheckoutPayment()
+    public function requestCheckoutPayment($payerId, $orderAmount)
     {
-      $detailsVo = $this->getDetailsResponseVo();
-
       // set post data
       $postData = array(
         'METHOD'        => 'DoExpressCheckoutPayment',
         'PAYMENTACTION' => 'Sale',
         'TOKEN'         => $this->getCheckoutToken(),
-        'PAYERID'       => $detailsVo->getPayerId(),
-        'AMT'           => $detailsVo->getOrderAmount(),
+        'PAYERID'       => $payerId,
+        'AMT'           => $orderAmount,
       );
 
       // add auth credentials
@@ -156,8 +172,8 @@
         ->setReturnTransfer(TRUE)
         ->execute();
 
-      /** @var $paymentResponseVo \Simplon\Payment\Providers\PayPal\Vo\PaymentResponseVo */
-      $paymentResponseVo = \Simplon\Payment\Providers\PayPal\Vo\PaymentResponseVo::init($response);
+      /** @var $paymentResponseVo PaymentResponseVo */
+      $paymentResponseVo = PaymentResponseVo::init($response);
 
       // throw exception on fail
       if($paymentResponseVo->isSuccess() === FALSE)

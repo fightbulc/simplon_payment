@@ -1,6 +1,6 @@
 <?php
 
-  namespace Simplon\Payment\Providers\PayPal;
+  namespace Simplon\Payment\PayPal;
 
   abstract class PayPalBase
   {
@@ -118,7 +118,7 @@
 
     /**
      * @param $token
-     * @return PayPalBase
+     * @return PayPalBase|PayPalProcess
      */
     public function setCheckoutToken($token)
     {

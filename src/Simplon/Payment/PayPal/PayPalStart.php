@@ -1,6 +1,8 @@
 <?php
 
-  namespace Simplon\Payment\Providers\PayPal;
+  namespace Simplon\Payment\PayPal;
+
+  use Simplon\Payment\PayPal\Vo\TokenResponseVo;
 
   class PayPalStart extends PayPalBase
   {
@@ -590,17 +592,19 @@
     // ##########################################
 
     /**
+     * @param null $checkoutToken
+     * @param bool $commitOnPayPal
      * @return string
      */
-    public function getUrlPayPalLogin()
+    public function createUrlPayPalLoginByCheckoutToken($checkoutToken = NULL, $commitOnPayPal = FALSE)
     {
       $data = array(
         'cmd'   => '_express-checkout',
-        'token' => $this->getCheckoutToken(),
+        'token' => $checkoutToken,
       );
 
       // complete order on paypal?
-      if($this->_isCommitOnPayPal())
+      if($commitOnPayPal !== FALSE)
       {
         $data['useraction'] = 'commit';
       }
@@ -610,6 +614,16 @@
 
       // return url
       return $this->_getUrlPayPalLogin() . $query;
+    }
+
+    // ##########################################
+
+    /**
+     * @return string
+     */
+    public function getUrlPayPalLogin()
+    {
+      return $this->createUrlPayPalLoginByCheckoutToken($this->getCheckoutToken(), $this->_isCommitOnPayPal());
     }
 
     // ##########################################
@@ -697,8 +711,8 @@
         ->setReturnTransfer(TRUE)
         ->execute();
 
-      /** @var $tokenResponseVo \Simplon\Payment\Providers\PayPal\Vo\TokenResponseVo */
-      $tokenResponseVo = \Simplon\Payment\Providers\PayPal\Vo\TokenResponseVo::init($response);
+      /** @var $tokenResponseVo TokenResponseVo */
+      $tokenResponseVo = TokenResponseVo::init($response);
 
       // throw exception on fail
       if($tokenResponseVo->isSuccess() === FALSE)

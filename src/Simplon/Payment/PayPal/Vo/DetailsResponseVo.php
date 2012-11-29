@@ -1,6 +1,6 @@
 <?php
 
-  namespace Simplon\Payment\Providers\PayPal\Vo;
+  namespace Simplon\Payment\PayPal\Vo;
 
   class DetailsResponseVo extends AbstractVo
   {
