@@ -2,7 +2,7 @@
 
   namespace Simplon\Payment\PayPal;
 
-  use Simplon\Payment\PayPal\Vo\TokenResponseVo;
+  use Simplon\Payment\PayPal\Vo\SetExpressCheckoutResponseVo;
 
   class PayPalStart extends PayPalBase
   {
@@ -20,6 +20,12 @@
 
     /** @var float */
     protected $_orderItemsTaxTotal = 0.00;
+
+    /** @var float */
+    protected $_orderSubTotal = 0.00;
+
+    /** @var float */
+    protected $_orderTax = 0.00;
 
     /** @var int */
     protected $_noShipping = 0;
@@ -46,7 +52,10 @@
     protected $_urlCancel;
 
     /** @var string */
-    protected $_urlPayPalLogin = 'https://www.sandbox.paypal.com/cgi-bin/webscr?';
+    protected $_urlPayPalLogin = 'https://www.paypal.com/cgi-bin/webscr?';
+
+    /** @var string */
+    protected $_urlPayPalLoginSandbox = 'https://www.sandbox.paypal.com/cgi-bin/webscr?';
 
     /** @var null */
     protected $_pageStyleName = NULL;
@@ -236,6 +245,15 @@
      */
     protected function _getUrlPayPalLogin()
     {
+      $isSandbox = $this
+        ->_getAuthInstance()
+        ->isSandboxMode();
+
+      if($isSandbox)
+      {
+        return $this->_urlPayPalLoginSandbox;
+      }
+
       return $this->_urlPayPalLogin;
     }
 
@@ -311,6 +329,52 @@
     // ##########################################
 
     /**
+     * @param $price
+     * @return PayPalStart
+     */
+    public function setOrderSubTotal($price)
+    {
+      $this->_orderSubTotal = $price;
+
+      return $this;
+    }
+
+    // ##########################################
+
+    /**
+     * @return float
+     */
+    protected function _getOrderSubTotal()
+    {
+      return $this->_orderSubTotal;
+    }
+
+    // ##########################################
+
+    /**
+     * @param $tax
+     * @return PayPalStart
+     */
+    public function setOrderTax($tax)
+    {
+      $this->_orderTax = $tax;
+
+      return $this;
+    }
+
+    // ##########################################
+
+    /**
+     * @return float
+     */
+    protected function _getOrderTax()
+    {
+      return $this->_orderTax;
+    }
+
+    // ##########################################
+
+    /**
      * @param $items
      * @return PayPalStart
      */
@@ -353,32 +417,29 @@
     {
       $orderItems = $this->_getOrderItems();
 
-      // we can't go on without any items
-      if(empty($orderItems))
+      if(! empty($orderItems))
       {
-        $this->_throwException('No order items have been defined.');
-      }
+        // render item fields, items subtotal and tax total
+        foreach($orderItems as $k => $itemClass)
+        {
+          /** @var $itemClass Item */
+          $item = array(
+            'L_PAYMENTREQUEST_0_NAME' . $k   => $itemClass->getName(),
+            'L_PAYMENTREQUEST_0_DESC' . $k   => $itemClass->getDescription(),
+            'L_PAYMENTREQUEST_0_NUMBER' . $k => $itemClass->getRefId(),
+            'L_PAYMENTREQUEST_0_AMT' . $k    => $itemClass->getPrice(),
+            'L_PAYMENTREQUEST_0_QTY' . $k    => $itemClass->getQuantity(),
+          );
 
-      // render item fields, items subtotal and tax total
-      foreach($orderItems as $k => $itemClass)
-      {
-        /** @var $itemClass Item */
-        $item = array(
-          'L_PAYMENTREQUEST_0_NAME' . $k   => $itemClass->getName(),
-          'L_PAYMENTREQUEST_0_DESC' . $k   => $itemClass->getDescription(),
-          'L_PAYMENTREQUEST_0_NUMBER' . $k => $itemClass->getRefId(),
-          'L_PAYMENTREQUEST_0_AMT' . $k    => $itemClass->getPrice(),
-          'L_PAYMENTREQUEST_0_QTY' . $k    => $itemClass->getQuantity(),
-        );
+          // add to prepared items
+          $this->_addPreparedOrderItem($item);
 
-        // add to prepared items
-        $this->_addPreparedOrderItem($item);
+          // add to items sub total
+          $this->_addOrderItemsSubTotal($itemClass->getPrice(), $itemClass->getQuantity());
 
-        // add to items sub total
-        $this->_addOrderItemsSubTotal($itemClass->getPrice(), $itemClass->getQuantity());
-
-        // add to tax total
-        $this->_addOrderItemsTaxTotal($itemClass->getPrice(), $itemClass->getQuantity(), $itemClass->getTax());
+          // add to tax total
+          $this->_addOrderItemsTaxTotal($itemClass->getPrice(), $itemClass->getQuantity(), $itemClass->getTax());
+        }
       }
 
       return TRUE;
@@ -455,6 +516,16 @@
     protected function _getOrderItemsTaxTotal()
     {
       return $this->_roundNumber($this->_orderItemsTaxTotal);
+    }
+
+    // ##########################################
+
+    /**
+     * @return float
+     */
+    protected function _getOrderTaxTotal()
+    {
+      return $this->_roundNumber($this->_getOrderItemsTaxTotal() + $this->_getOrderTax());
     }
 
     // ##########################################
@@ -580,7 +651,7 @@
     public function getOrderTotalAmount()
     {
       // add amounts together
-      $totalAmount = $this->_getOrderItemsSubTotal() + $this->_getOrderItemsTaxTotal() + $this->_getShippingAmount() + $this->_getHandlingAmount() + $this->_getInsuranceAmount();
+      $totalAmount = $this->_getOrderSubTotal() + $this->_getOrderItemsSubTotal() + $this->_getOrderItemsTaxTotal() + $this->_getShippingAmount() + $this->_getHandlingAmount() + $this->_getInsuranceAmount();
 
       // deduct shipping discount
       $totalAmount = $totalAmount - $this->_getShippingDiscount();
@@ -646,8 +717,6 @@
          * payment details
          */
         'PAYMENTREQUEST_0_PAYMENTACTION' => $this->_getPaymentAction(),
-        'PAYMENTREQUEST_0_ITEMAMT'       => $this->_getOrderItemsSubTotal(),
-        'PAYMENTREQUEST_0_TAXAMT'        => $this->_getOrderItemsTaxTotal(),
         'PAYMENTREQUEST_0_SHIPPINGAMT'   => $this->_getShippingAmount(),
         'PAYMENTREQUEST_0_SHIPDISCAMT'   => $this->_getShippingDiscount(),
         'PAYMENTREQUEST_0_HANDLINGAMT'   => $this->_getHandlingAmount(),
@@ -675,9 +744,15 @@
       // add prepared order items
       $preparedOrderItems = $this->_getPreparedOrderItems();
 
-      foreach($preparedOrderItems as $item)
+      if(! empty($preparedOrderItems))
       {
-        $postData = array_merge($postData, $item);
+        $postData['PAYMENTREQUEST_0_ITEMAMT'] = $this->_getOrderItemsSubTotal();
+        $postData['PAYMENTREQUEST_0_TAXAMT'] = $this->_getOrderTaxTotal();
+
+        foreach($preparedOrderItems as $item)
+        {
+          $postData = array_merge($postData, $item);
+        }
       }
 
       // add auth credentials
@@ -711,16 +786,16 @@
         ->setReturnTransfer(TRUE)
         ->execute();
 
-      /** @var $tokenResponseVo TokenResponseVo */
-      $tokenResponseVo = TokenResponseVo::init($response);
+      /** @var $setExpressCheckoutResponseVo SetExpressCheckoutResponseVo */
+      $setExpressCheckoutResponseVo = SetExpressCheckoutResponseVo::init($response);
 
       // throw exception on fail
-      if($tokenResponseVo->isSuccess() === FALSE)
+      if($setExpressCheckoutResponseVo->isSuccess() === FALSE)
       {
-        $this->_throwException('requestCheckoutToken failed with errors: ' . $tokenResponseVo->getErrors());
+        $this->_throwException('requestCheckoutToken failed with errors: ' . $setExpressCheckoutResponseVo->getErrors());
       }
 
       // all cool; return token
-      return $tokenResponseVo->getToken();
+      return $setExpressCheckoutResponseVo->getToken();
     }
   }

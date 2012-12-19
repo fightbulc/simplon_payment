@@ -11,7 +11,7 @@
 
     /**
      * @param $dataString
-     * @return AbstractVo
+     * @return static
      */
     public static function init($dataString = '')
     {

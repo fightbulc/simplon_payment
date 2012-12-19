@@ -2,79 +2,23 @@
 
   namespace Simplon\Payment\PayPal;
 
-  use Simplon\Payment\PayPal\Vo\PaymentResponseVo;
-  use Simplon\Payment\PayPal\Vo\DetailsResponseVo;
+  use Simplon\Payment\PayPal\Vo\GetExpressCheckoutDetailsResponseVo;
+  use Simplon\Payment\PayPal\Vo\DoExpressCheckoutPaymentResponseVo;
 
   class PayPalProcess extends PayPalBase
   {
-    /** @var \Simplon\Payment\PayPal\Vo\DetailsResponseVo */
-    protected $_detailsResponseVo;
+    /** @var GetExpressCheckoutDetailsResponseVo */
+    protected $_getExpressCheckoutDetailsResponseVo;
 
-    /** @var \Simplon\Payment\PayPal\Vo\PaymentResponseVo */
+    /** @var DoExpressCheckoutPaymentResponseVo */
     protected $_paymentResponseVo;
 
     // ##########################################
 
     /**
-     * @param $vo
      * @return PayPalProcess
      */
-    protected function _setDetailsResponseVo($vo)
-    {
-      $this->_detailsResponseVo = $vo;
-
-      return $this;
-    }
-
-    // ##########################################
-
-    /**
-     * @return bool|Vo\DetailsResponseVo
-     */
-    public function getDetailsResponseVo()
-    {
-      if(isset($this->_detailsResponseVo))
-      {
-        return $this->_detailsResponseVo;
-      }
-
-      return FALSE;
-    }
-
-    // ##########################################
-
-    /**
-     * @param $vo
-     * @return PayPalProcess
-     */
-    protected function _setPaymentResponseVo($vo)
-    {
-      $this->_paymentResponseVo = $vo;
-
-      return $this;
-    }
-
-    // ##########################################
-
-    /**
-     * @return bool|Vo\PaymentResponseVo
-     */
-    public function getPaymentResponseVo()
-    {
-      if(isset($this->_paymentResponseVo))
-      {
-        return $this->_paymentResponseVo;
-      }
-
-      return FALSE;
-    }
-
-    // ##########################################
-
-    /**
-     * @return PayPalProcess
-     */
-    public function requestCheckoutDetails()
+    public function requestGetExpressCheckoutDetails()
     {
       // set post data
       $postData = array(
@@ -112,17 +56,17 @@
         ->setReturnTransfer(TRUE)
         ->execute();
 
-      /** @var $detailsResponseVo DetailsResponseVo */
-      $detailsResponseVo = DetailsResponseVo::init($response);
+      /** @var $getExpressCheckoutDetailsResponseVo GetExpressCheckoutDetailsResponseVo */
+      $getExpressCheckoutDetailsResponseVo = GetExpressCheckoutDetailsResponseVo::init($response);
 
       // throw exception on fail
-      if($detailsResponseVo->isSuccess() === FALSE)
+      if($getExpressCheckoutDetailsResponseVo->isSuccess() === FALSE)
       {
-        $this->_throwException('requestCheckoutDetails failed with errors: ' . $detailsResponseVo->getErrors());
+        $this->_throwException('requestGetExpressCheckoutDetails failed with errors: ' . $getExpressCheckoutDetailsResponseVo->getErrors());
       }
 
       // all cool; set vo
-      $this->_setDetailsResponseVo($detailsResponseVo);
+      $this->_setGetExpressCheckoutDetailsResponseVo($getExpressCheckoutDetailsResponseVo);
 
       return $this;
     }
@@ -130,19 +74,49 @@
     // ##########################################
 
     /**
-     * @param $payerId
-     * @param $orderAmount
+     * @param Vo\GetExpressCheckoutDetailsResponseVo $vo
      * @return PayPalProcess
      */
-    public function requestCheckoutPayment($payerId, $orderAmount)
+    protected function _setGetExpressCheckoutDetailsResponseVo(GetExpressCheckoutDetailsResponseVo $vo)
+    {
+      $this->_getExpressCheckoutDetailsResponseVo = $vo;
+
+      return $this;
+    }
+
+    // ##########################################
+
+    /**
+     * @return bool|Vo\GetExpressCheckoutDetailsResponseVo
+     */
+    public function getGetExpressCheckoutDetailsResponseVo()
+    {
+      if(isset($this->_getExpressCheckoutDetailsResponseVo))
+      {
+        return $this->_getExpressCheckoutDetailsResponseVo;
+      }
+
+      return FALSE;
+    }
+
+    // ##########################################
+
+    /**
+     * @param $payerId
+     * @param $orderAmount
+     * @param $currencyCode
+     * @return PayPalProcess
+     */
+    public function requestDoExpressCheckoutPayment($payerId, $orderAmount, $currencyCode)
     {
       // set post data
       $postData = array(
-        'METHOD'        => 'DoExpressCheckoutPayment',
-        'PAYMENTACTION' => 'Sale',
-        'TOKEN'         => $this->getCheckoutToken(),
-        'PAYERID'       => $payerId,
-        'AMT'           => $orderAmount,
+        'METHOD'                         => 'DoExpressCheckoutPayment',
+        'TOKEN'                          => $this->getCheckoutToken(),
+        'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
+        'PAYERID'                        => $payerId,
+        'PAYMENTREQUEST_0_AMT'           => $orderAmount,
+        'PAYMENTREQUEST_0_CURRENCYCODE'  => $currencyCode,
       );
 
       // add auth credentials
@@ -172,18 +146,46 @@
         ->setReturnTransfer(TRUE)
         ->execute();
 
-      /** @var $paymentResponseVo PaymentResponseVo */
-      $paymentResponseVo = PaymentResponseVo::init($response);
+      /** @var $doExpressCheckoutPaymentResponseVo DoExpressCheckoutPaymentResponseVo */
+      $doExpressCheckoutPaymentResponseVo = DoExpressCheckoutPaymentResponseVo::init($response);
 
       // throw exception on fail
-      if($paymentResponseVo->isSuccess() === FALSE)
+      if($doExpressCheckoutPaymentResponseVo->isSuccess() === FALSE)
       {
-        $this->_throwException('requestCheckoutPayment failed with errors: ' . $paymentResponseVo->getErrors());
+        $this->_throwException('requestDoExpressCheckoutPayment failed with errors: ' . $doExpressCheckoutPaymentResponseVo->getErrors());
       }
 
       // all cool; set vo
-      $this->_setPaymentResponseVo($paymentResponseVo);
+      $this->_setDoExpressCheckoutPaymentResponseVo($doExpressCheckoutPaymentResponseVo);
 
       return $this;
+    }
+
+    // ##########################################
+
+    /**
+     * @param Vo\DoExpressCheckoutPaymentResponseVo $vo
+     * @return PayPalProcess
+     */
+    protected function _setDoExpressCheckoutPaymentResponseVo(DoExpressCheckoutPaymentResponseVo $vo)
+    {
+      $this->_paymentResponseVo = $vo;
+
+      return $this;
+    }
+
+    // ##########################################
+
+    /**
+     * @return bool|Vo\DoExpressCheckoutPaymentResponseVo
+     */
+    public function getPaymentResponseVo()
+    {
+      if(isset($this->_paymentResponseVo))
+      {
+        return $this->_paymentResponseVo;
+      }
+
+      return FALSE;
     }
   }

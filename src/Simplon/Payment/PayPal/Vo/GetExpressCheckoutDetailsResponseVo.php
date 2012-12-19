@@ -2,7 +2,7 @@
 
   namespace Simplon\Payment\PayPal\Vo;
 
-  class DetailsResponseVo extends AbstractVo
+  class GetExpressCheckoutDetailsResponseVo extends AbstractVo
   {
     /**
      * @return bool|mixed
@@ -50,6 +50,16 @@
     public function getLastName()
     {
       return $this->_getByKey('lastname');
+    }
+
+    // ##########################################
+
+    /**
+     * @return bool|mixed
+     */
+    public function getCurrencyCode()
+    {
+      return $this->_getByKey('currencycode');
     }
 
     // ##########################################

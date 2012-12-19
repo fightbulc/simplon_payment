@@ -2,7 +2,7 @@
 
   namespace Simplon\Payment\PayPal\Vo;
 
-  class PaymentResponseVo extends AbstractVo
+  class DoExpressCheckoutPaymentResponseVo extends AbstractVo
   {
     /**
      * @return bool|mixed
