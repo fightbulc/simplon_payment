@@ -11,7 +11,7 @@
     protected $_getExpressCheckoutDetailsResponseVo;
 
     /** @var DoExpressCheckoutPaymentResponseVo */
-    protected $_paymentResponseVo;
+    protected $_doExpressCheckoutPaymentResponseVo;
 
     // ##########################################
 
@@ -169,7 +169,7 @@
      */
     protected function _setDoExpressCheckoutPaymentResponseVo(DoExpressCheckoutPaymentResponseVo $vo)
     {
-      $this->_paymentResponseVo = $vo;
+      $this->_doExpressCheckoutPaymentResponseVo = $vo;
 
       return $this;
     }
@@ -179,11 +179,11 @@
     /**
      * @return bool|Vo\DoExpressCheckoutPaymentResponseVo
      */
-    public function getPaymentResponseVo()
+    public function getDoExpressCheckoutPaymentResponseVo()
     {
-      if(isset($this->_paymentResponseVo))
+      if(isset($this->_doExpressCheckoutPaymentResponseVo))
       {
-        return $this->_paymentResponseVo;
+        return $this->_doExpressCheckoutPaymentResponseVo;
       }
 
       return FALSE;
