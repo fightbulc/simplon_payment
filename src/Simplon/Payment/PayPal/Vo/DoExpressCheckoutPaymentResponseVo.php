@@ -7,9 +7,9 @@
     /**
      * @return bool|mixed
      */
-    public function getTransactionId()
+    public function getCorrelationId()
     {
-      return $this->_getByKey('transactionid');
+      return $this->_getByKey('correlationid');
     }
 
     // ##########################################
