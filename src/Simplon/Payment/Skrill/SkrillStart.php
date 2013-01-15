@@ -596,9 +596,12 @@
      * @param $value
      * @return $this
      */
-    public function addOrderCallbackData($name, $value)
+    public function addOrderCustomCallbackData($name, $value)
     {
-      $this->_orderCallbackData[$name] = $value;
+      if(count($this->_orderCallbackData) <= 5)
+      {
+        $this->_orderCallbackData['custom_' . $name] = $value;
+      }
 
       return $this;
     }
@@ -611,6 +614,23 @@
     protected function _getOrderCallbackData()
     {
       return $this->_orderCallbackData;
+    }
+
+    // ##########################################
+
+    /**
+     * @return string
+     */
+    protected function _getOrderMerchantFields()
+    {
+      $fieldNames = array_keys($this->_getOrderCallbackData());
+
+      if(! empty($fieldNames))
+      {
+        return join(',', $fieldNames);
+      }
+
+      return '';
     }
 
     // ##########################################
@@ -1451,6 +1471,7 @@
         'country'               => $this->_getOrderCustomerAddressCountry(),
         'amount'                => $this->_getOrderAmount(),
         'currency'              => $this->_getOrderCurrency(),
+        'merchant_fields'       => $this->_getOrderMerchantFields(),
       ];
 
       // include cost descriptions
