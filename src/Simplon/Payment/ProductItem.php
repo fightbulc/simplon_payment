@@ -1,8 +1,8 @@
 <?php
 
-  namespace Simplon\Payment\PayPal;
+  namespace Simplon\Payment;
 
-  class Item
+  class ProductItem
   {
     /** @var string */
     protected $_refId;
@@ -24,16 +24,9 @@
 
     // ##########################################
 
-    public static function init()
-    {
-      return new Item();
-    }
-
-    // ##########################################
-
     /**
      * @param $description
-     * @return Item
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -56,7 +49,7 @@
 
     /**
      * @param $name
-     * @return Item
+     * @return $this
      */
     public function setName($name)
     {
@@ -79,7 +72,7 @@
 
     /**
      * @param $price
-     * @return Item
+     * @return $this
      */
     public function setPrice($price)
     {
@@ -102,7 +95,7 @@
 
     /**
      * @param $tax
-     * @return Item
+     * @return $this
      */
     public function setTax($tax)
     {
@@ -125,7 +118,7 @@
 
     /**
      * @param $quantity
-     * @return Item
+     * @return $this
      */
     public function setQuantity($quantity)
     {
@@ -148,7 +141,7 @@
 
     /**
      * @param $refId
-     * @return Item
+     * @return $this
      */
     public function setRefId($refId)
     {
