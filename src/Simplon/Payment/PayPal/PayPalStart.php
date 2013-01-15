@@ -3,6 +3,7 @@
   namespace Simplon\Payment\PayPal;
 
   use Simplon\Payment\PayPal\Vo\SetExpressCheckoutResponseVo;
+  use Simplon\Payment\ProductItem;
 
   class PayPalStart extends PayPalBase
   {
@@ -97,7 +98,7 @@
 
     /**
      * @param $action
-     * @return PayPalStart
+     * @return $this
      */
     public function setPaymentAction($action)
     {
@@ -120,7 +121,7 @@
 
     /**
      * @param $bool
-     * @return PayPalStart
+     * @return $this
      */
     public function setCommitOnPayPal($bool)
     {
@@ -143,7 +144,7 @@
 
     /**
      * @param $code
-     * @return PayPalStart
+     * @return $this
      */
     public function setCurrencyCode($code)
     {
@@ -166,7 +167,7 @@
 
     /**
      * @param $code
-     * @return PayPalStart
+     * @return $this
      */
     public function setLocaleCode($code)
     {
@@ -196,7 +197,7 @@
 
     /**
      * @param $url
-     * @return PayPalStart
+     * @return $this
      */
     public function setUrlSuccess($url)
     {
@@ -219,7 +220,7 @@
 
     /**
      * @param $url
-     * @return PayPalStart
+     * @return $this
      */
     public function setUrlCancel($url)
     {
@@ -261,7 +262,7 @@
 
     /**
      * @param $pageStyleName
-     * @return PayPalStart
+     * @return $this
      */
     public function setPageStyle($pageStyleName)
     {
@@ -284,7 +285,7 @@
 
     /**
      * @param $url
-     * @return PayPalStart
+     * @return $this
      */
     public function setCustomLogoImage($url)
     {
@@ -307,7 +308,7 @@
 
     /**
      * @param $hexColor
-     * @return PayPalStart
+     * @return $this
      */
     public function setCustomBorderColor($hexColor)
     {
@@ -330,7 +331,7 @@
 
     /**
      * @param $price
-     * @return PayPalStart
+     * @return $this
      */
     public function setOrderSubTotal($price)
     {
@@ -353,7 +354,7 @@
 
     /**
      * @param $tax
-     * @return PayPalStart
+     * @return $this
      */
     public function setOrderTax($tax)
     {
@@ -376,7 +377,7 @@
 
     /**
      * @param $items
-     * @return PayPalStart
+     * @return $this
      */
     public function setOrderItemsMany($items)
     {
@@ -388,10 +389,10 @@
     // ##########################################
 
     /**
-     * @param Item $item
-     * @return PayPalStart
+     * @param \Simplon\Payment\ProductItem $item
+     * @return $this
      */
-    public function addOrderItem(Item $item)
+    public function addOrderItem(ProductItem $item)
     {
       $this->_orderItems[] = $item;
 
@@ -422,7 +423,7 @@
         // render item fields, items subtotal and tax total
         foreach($orderItems as $k => $itemClass)
         {
-          /** @var $itemClass Item */
+          /** @var $itemClass ProductItem */
           $item = array(
             'L_PAYMENTREQUEST_0_NAME' . $k   => $itemClass->getName(),
             'L_PAYMENTREQUEST_0_DESC' . $k   => $itemClass->getDescription(),
@@ -449,7 +450,7 @@
 
     /**
      * @param $preparedItem
-     * @return PayPalStart
+     * @return $this
      */
     protected function _addPreparedOrderItem($preparedItem)
     {
@@ -473,7 +474,7 @@
     /**
      * @param $itemPrice
      * @param $quantity
-     * @return PayPalStart
+     * @return $this
      */
     protected function _addOrderItemsSubTotal($itemPrice, $quantity)
     {
@@ -498,7 +499,7 @@
      * @param $itemPrice
      * @param $quantity
      * @param $taxPercentage
-     * @return PayPalStart
+     * @return $this
      */
     protected function _addOrderItemsTaxTotal($itemPrice, $quantity, $taxPercentage)
     {
@@ -532,7 +533,7 @@
 
     /**
      * @param $bool
-     * @return PayPalStart
+     * @return $this
      */
     public function setNoShipping($bool = FALSE)
     {
@@ -555,7 +556,7 @@
 
     /**
      * @param $cost
-     * @return PayPalStart
+     * @return $this
      */
     public function setShippingAmount($cost)
     {
@@ -578,7 +579,7 @@
 
     /**
      * @param $cost
-     * @return PayPalStart
+     * @return $this
      */
     public function setShippingDiscount($cost)
     {
@@ -601,7 +602,7 @@
 
     /**
      * @param $cost
-     * @return PayPalStart
+     * @return $this
      */
     public function setHandlingAmount($cost)
     {
@@ -624,7 +625,7 @@
 
     /**
      * @param $cost
-     * @return PayPalStart
+     * @return $this
      */
     public function setInsuranceAmount($cost)
     {
@@ -700,7 +701,7 @@
     // ##########################################
 
     /**
-     * @return PayPalStart
+     * @return $this
      */
     public function requestCheckoutToken()
     {
