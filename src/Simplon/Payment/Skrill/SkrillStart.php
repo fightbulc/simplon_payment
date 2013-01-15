@@ -665,7 +665,7 @@
      */
     public function addOrderCostDescriptions($label, $value)
     {
-      if(count($this->_orderCostDescriptions) < 4)
+      if(count($this->_orderCostDescriptions) <= 4)
       {
         $this->_orderCostDescriptions[] = [
           'label' => $label,
@@ -1026,7 +1026,7 @@
      */
     public function addOrderProductDescriptions($label, $value)
     {
-      if(count($this->_orderProductDescriptions) < 5)
+      if(count($this->_orderProductDescriptions) <= 5)
       {
         $this->_orderProductDescriptions[] = [
           'label' => $label,
