@@ -1,7 +1,7 @@
 <?php
   namespace Simplon\Payment\Skrill\PaymentMethods;
 
-  class SkrillPaymentMethodsSingapore extends SkrillPaymentMethodsAllCountries
+  class SkrillPaymentMethodsAustralia extends SkrillPaymentMethodsAllCountries
   {
     /**
      * @return $this
