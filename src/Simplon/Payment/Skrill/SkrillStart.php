@@ -1443,12 +1443,12 @@
     // ##########################################
 
     /**
-     * @param PaymentMethods\InterfaceSkrillPaymentMethods $abstractSkrillPaymentMethods
+     * @param $paymentMethodsString
      * @return $this
      */
-    public function setOrderEnabledPaymentMethods(InterfaceSkrillPaymentMethods $abstractSkrillPaymentMethods)
+    public function setOrderEnabledPaymentMethods($paymentMethodsString)
     {
-      $this->_orderEnabledPaymentMethodsString = $abstractSkrillPaymentMethods->getEnabledMethodCodesAsString();
+      $this->_orderEnabledPaymentMethodsString = $paymentMethodsString;
 
       return $this;
     }
@@ -1549,7 +1549,7 @@
       }
 
       // cache token for runtime
-      $this->_setOrderCheckoutToken($checkoutToken);
+      $this->setCheckoutToken($checkoutToken);
 
       return $this;
     }
@@ -1578,7 +1578,7 @@
      * @param $token
      * @return $this
      */
-    protected function _setOrderCheckoutToken($token)
+    public function setCheckoutToken($token)
     {
       $this->_orderCheckoutToken = $token;
 
@@ -1590,7 +1590,7 @@
     /**
      * @return mixed
      */
-    protected function _getOrderCheckoutToken()
+    public function getCheckoutToken()
     {
       return $this->_orderCheckoutToken;
     }
@@ -1606,7 +1606,7 @@
       $gatewayUrl = $this->_getUrlGatewayActive();
 
       // checkout token
-      $checkoutToken = $this->_getOrderCheckoutToken();
+      $checkoutToken = $this->getCheckoutToken();
 
       // return combined url
       return $gatewayUrl . '?sid=' . $checkoutToken;
