@@ -2,7 +2,7 @@
 
   namespace Simplon\Payment\Skrill;
 
-  use Simplon\Payment\Skrill\PaymentMethods\AbstractSkrillPaymentMethods;
+  use Simplon\Payment\ProductItem;
   use Simplon\Payment\Skrill\PaymentMethods\InterfaceSkrillPaymentMethods;
 
   class SkrillStart
@@ -380,7 +380,8 @@
     protected $_hideLoginSection = SkrillStart::HIDE_LOGIN_SECTION_ON;
 
     protected $_orderTransactionId;
-    protected $_orderAmount;
+    protected $_orderItems = [];
+    protected $_orderAmount = 0.00;
     protected $_orderCurrency;
     protected $_orderLanguage;
     protected $_orderProductDescriptions = [];
@@ -569,12 +570,12 @@
     // ##########################################
 
     /**
-     * @param $orderAmount
+     * @param ProductItem[] $items
      * @return $this
      */
-    public function setOrderAmount($orderAmount)
+    public function setOrderItemsMany($items)
     {
-      $this->_orderAmount = $orderAmount;
+      $this->_orderItems = $items;
 
       return $this;
     }
@@ -582,10 +583,43 @@
     // ##########################################
 
     /**
-     * @return mixed
+     * @param \Simplon\Payment\ProductItem $item
+     * @return $this
+     */
+    public function addOrderItem(ProductItem $item)
+    {
+      $this->_orderItems[] = $item;
+
+      return $this;
+    }
+
+    // ##########################################
+
+    /**
+     * @return ProductItem[]
+     */
+    protected function _getOrderItems()
+    {
+      return $this->_orderItems;
+    }
+
+    // ##########################################
+
+    /**
+     * @return float
      */
     protected function _getOrderAmount()
     {
+      $orderItems = $this->_getOrderItems();
+
+      if(count($orderItems))
+      {
+        foreach($orderItems as $item)
+        {
+          $this->_orderAmount += $item->getPrice() * $item->getQuantity();
+        }
+      }
+
       return $this->_orderAmount;
     }
 
