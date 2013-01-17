@@ -2,7 +2,7 @@
 
   namespace Simplon\Payment\Skrill\Vo;
 
-  class CallbackResponseVo
+  class CheckoutQueryResponseVo
   {
     protected $_postData = [];
     protected $_customCallbackData = [];
