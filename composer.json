@@ -17,8 +17,8 @@
     "minimum-stability":"dev",
 
     "require":{
-        "php":">=5.3.3",
-        "fightbulc/php_curl":"dev-master"
+        "php":">=5.4",
+        "fightbulc/php_curl":"1.0.0"
     },
 
     "autoload":{
