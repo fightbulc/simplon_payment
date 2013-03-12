@@ -15,7 +15,7 @@
     public function getCheckoutDetailsByMerchantTransactionId($merchantEmailAccount, $gatewayPassword, $transactionId)
     {
       // build query string
-      //      $postDataQuery = http_build_query($postData);
+      // $postDataQuery = http_build_query($postData);
       $parameter = 'action=status_trn&email=' . $merchantEmailAccount . '&password=' . md5($gatewayPassword) . '&trn_id=' . $transactionId;
 
       // call paypal
