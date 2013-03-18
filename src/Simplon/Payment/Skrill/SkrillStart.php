@@ -782,12 +782,12 @@
     // ##########################################
 
     /**
-     * @param $urlCallback
+     * @param $callback
      * @return $this
      */
-    public function setUrlCallback($urlCallback)
+    public function setUrlOrEmailCallback($callback)
     {
-      $this->_urlCallback = $urlCallback;
+      $this->_urlOrEmailCallback = $callback;
 
       return $this;
     }
@@ -797,20 +797,20 @@
     /**
      * @return mixed
      */
-    protected function _getUrlCallback()
+    protected function _getUrlOrEmailCallback()
     {
-      return $this->_urlCallback;
+      return $this->_urlOrEmailCallback;
     }
 
     // ##########################################
 
     /**
-     * @param $urlCallbackAlternative
+     * @param $callback
      * @return $this
      */
-    public function setUrlCallbackAlternative($urlCallbackAlternative)
+    public function setUrlOrEmailCallbackAlternative($callback)
     {
-      $this->_urlCallbackAlternative = $urlCallbackAlternative;
+      $this->_urlOrEmailCallbackAlternative = $callback;
 
       return $this;
     }
@@ -820,9 +820,9 @@
     /**
      * @return mixed
      */
-    protected function _getUrlCallbackAlternative()
+    protected function _getUrlOrEmailCallbackAlternative()
     {
-      return $this->_urlCallbackAlternative;
+      return $this->_urlOrEmailCallbackAlternative;
     }
 
     // ##########################################
@@ -1005,8 +1005,8 @@
         'return_url_target'     => $this->_getUrlReturnTarget(),
         'cancel_url'            => $this->_getUrlCancel(),
         'cancel_url_target'     => $this->_getUrlCancelTarget(),
-        'status_url'            => $this->_getUrlCallback(),
-        'status_url2'           => $this->_getUrlCallbackAlternative(),
+        'status_url'            => $this->_getUrlOrEmailCallback(),
+        'status_url2'           => $this->_getUrlOrEmailCallbackAlternative(),
         'new_window_redirect'   => $this->_getRedirectSofortUeberweisung(),
         'language'              => $this->_getOrderLanguage(),
         'hide_login'            => $this->_isHideLoginSection(),

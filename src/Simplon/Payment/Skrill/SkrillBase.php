@@ -358,8 +358,8 @@
     protected $_urlReturnTarget = SkrillStart::URL_TARGET_TOP;
     protected $_urlCancel;
     protected $_urlCancelTarget = SkrillStart::URL_TARGET_TOP;
-    protected $_urlCallback;
-    protected $_urlCallbackAlternative;
+    protected $_urlOrEmailCallback;
+    protected $_urlOrEmailCallbackAlternative;
     protected $_urlLogo;
 
     protected $_redirectSofortUeberweisung = SkrillStart::REDIRECT_SOFORTUEBERWEISUNG_OFF;
