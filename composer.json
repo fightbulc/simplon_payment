@@ -2,7 +2,7 @@
     "name":"simplon/payment",
     "description":"Flexible solution to enable payments for multiple payment providers.",
     "homepage":"https://github.com/fightbulc/simplon_payment",
-    "version":"0.5.0",
+    "version":"0.5.1",
     "type":"library",
     "keywords":["payment"],
     "license":"MIT",
@@ -23,7 +23,7 @@
 
     "autoload":{
         "psr-0":{
-            "Simplon\\Payment\\":"src/"
+            "Simplon\\Payment":"src/"
         }
     }
 }
