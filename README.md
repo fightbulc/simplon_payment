@@ -23,7 +23,7 @@ Simplon Payment was built to host conform libraries for different payment servic
 
 Make sure to create test accounts for both libraries. [Setting up test accounts for PayPal is really easy](https://developer.paypal.com/).
 
-Skrill is a bit more challenging. The setup for real- and test-accounts is the same. However, in order to activate an account as test-account you need to send an inquiry via email to the support. Include your account number. This takes some time. The easiest and fastest way though would be to contact your Skrill key account manager to handle the setup - provided that you have a key account manager.
+Skrill is a bit more challenging. The [setup for real- and test-accounts](https://www.moneybookers.com/onboard/en/register.pl?scid=main) is the same. However, in order to activate an account as test-account you need to send an inquiry via email to the support. Include your account number. This takes some time. The easiest and fastest way though would be to contact your Skrill key account manager to handle the setup - provided that you have a key account manager.
 
 ## Install
 
