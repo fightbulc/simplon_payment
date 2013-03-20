@@ -33,7 +33,7 @@ You can install Simplon/Payment either via package download from github or via [
 {
   "require": {
     "php": ">=5.4",
-    "simplon/payment": "1.0.0"
+    "simplon/payment": "0.5.*"
   }
 }
 ```
