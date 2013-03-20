@@ -251,7 +251,11 @@ Upon successful data entry and all confirmations on Skrill's page the user will 
 
 If we defined a ```URL_CALLBACK``` Skrill will send us all booking data via ```POST```. From there on its up to us on how to process these data.
 
-However, there is an alternative which allows us to fetch all booking data at any time which pleases us. For that we have to use the aforementioned ```Merchant Query Interface (MQI)``` in combination with our ```MERCHANT_EMAIL```, ```GATEWAY_PASSWORD``` and a ```TRANSACTION_ID```:
+Another way would be to set a ```URL``` or ```EMAIL``` via ```setUrlOrEmailCallback()```. Skrill will send us all data either to the given ```URL``` or ```EMAIL``` regardless of a transactions success. If you need another callback you can use ```setUrlOrEmailCallbackAlternative()```. Same rules apply as for the prior method.
+
+However, there is yet another alternative which allows us to fetch booking data at any time. For that we have to use the aforementioned ```Merchant Query Interface (MQI)``` in combination with our ```MERCHANT_EMAIL```, ```GATEWAY_PASSWORD``` and a ```MERCHANT_TRANSACTION_ID```.
+
+__Important note:__ The ```MERCHANT_TRANSACTION_ID``` is the ID we passed to Skrill. In our example above it would be ```'8473d989-4ad0-4c83-b6e3-5cc0ed74a408'```.
 
 ```php
 // credentials
