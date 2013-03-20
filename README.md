@@ -66,7 +66,7 @@ PayPal requires always authentication which is handled by our ```Auth``` class:
 $authPayPal = \Simplon\Payment\PayPal\Auth::init()
   ->setUsername('MERCHANT_USER')
   ->setPassword('MERCHANT_PASSWORD')
-  ->setSignature('AFcWxV21C7fd0v3bYYYRCpSSRl31ApO9gj13zKmSBD2TGtEw8-whfzBW')
+  ->setSignature('MERCHANT_SIGNATURE')
   ->setSandboxMode(TRUE); // for production = FALSE
 ```
 
@@ -165,6 +165,10 @@ $paymentResponseVo = $paypalSession->getDoExpressCheckoutPaymentResponseVo();
 ```
 
 If no exception occurs the checkout went through and we received some money. All what is left to conclude a PayPal checkout is to save the response data to a DB so that we have a persistent access.
+
+### Sandbox mode
+
+Note that in sandbox mode the only currency accepted is ```USD```. If you checkout by using another one PayPal will throw exceptions and you will never be able to finalise your test bookings.
 
 ## Skrill
 
