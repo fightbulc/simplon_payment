@@ -1,39 +1,39 @@
 <?php
-  namespace Simplon\Payment\Skrill\PaymentMethods;
+    namespace Simplon\Payment\Skrill\PaymentMethods;
 
-  class SkrillPaymentMethodsAustria extends SkrillPaymentMethodsAllCountries
-  {
-    /**
-     * @return $this
-     */
-    public function useCardMaestro()
+    class SkrillPaymentMethodsAustria extends SkrillPaymentMethodsAllCountries
     {
-      $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::CARD_MAESTRO);
+        /**
+         * @return $this
+         */
+        public function useCardMaestro()
+        {
+            $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::CARD_MAESTRO);
 
-      return $this;
+            return $this;
+        }
+
+        // ##########################################
+
+        /**
+         * @return $this
+         */
+        public function useBankSofortueberweisung()
+        {
+            $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::BANK_SOFORTUEBERWEISUNG);
+
+            return $this;
+        }
+
+        // ##########################################
+
+        /**
+         * @return $this
+         */
+        public function useBankEpsNetpay()
+        {
+            $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::BANK_EPS_NETPAY);
+
+            return $this;
+        }
     }
-
-    // ##########################################
-
-    /**
-     * @return $this
-     */
-    public function useBankSofortueberweisung()
-    {
-      $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::BANK_SOFORTUEBERWEISUNG);
-
-      return $this;
-    }
-
-    // ##########################################
-
-    /**
-     * @return $this
-     */
-    public function useBankEpsNetpay()
-    {
-      $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::BANK_EPS_NETPAY);
-
-      return $this;
-    }
-  }

@@ -1,27 +1,27 @@
 <?php
-  namespace Simplon\Payment\Skrill\PaymentMethods;
+    namespace Simplon\Payment\Skrill\PaymentMethods;
 
-  class SkrillPaymentMethodsSweden extends SkrillPaymentMethodsAllCountries
-  {
-    /**
-     * @return $this
-     */
-    public function useBankOnlineBankTransfer()
+    class SkrillPaymentMethodsSweden extends SkrillPaymentMethodsAllCountries
     {
-      $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::BANK_ONLINE_BANK_TRANSFER);
+        /**
+         * @return $this
+         */
+        public function useBankOnlineBankTransfer()
+        {
+            $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::BANK_ONLINE_BANK_TRANSFER);
 
-      return $this;
+            return $this;
+        }
+
+        // ##########################################
+
+        /**
+         * @return $this
+         */
+        public function useBankNordeaSolo()
+        {
+            $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::BANK_NORDEA_SOLO_SWEDEN);
+
+            return $this;
+        }
     }
-
-    // ##########################################
-
-    /**
-     * @return $this
-     */
-    public function useBankNordeaSolo()
-    {
-      $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::BANK_NORDEA_SOLO_SWEDEN);
-
-      return $this;
-    }
-  }

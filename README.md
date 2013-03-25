@@ -15,7 +15,7 @@
 
 # Simplon Payment
 
-Version 0.5.3
+Version 0.5.4
 
 ## Intro
 
@@ -295,3 +295,9 @@ $checkoutQueryResponseVo->getPostedCustomCallbackData();
 ```
 
 With that example we have finished the checkout cycle for Skrill payments.
+
+## Changelog
+
+### 0.5.4
+- Fixed deprecated PayPal response fields for ```DoExpressCheckout```
+- Added descriptions for ```DoExpressCheckout``` response fields ```PaymentStatus```, ```PendingReason``` and ```ReasonCode``` (see ```DoExpressCheckoutVo```)

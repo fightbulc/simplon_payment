@@ -1,24 +1,24 @@
 <?php
 
-  namespace Simplon\Payment\PayPal\Vo;
+    namespace Simplon\Payment\PayPal\Vo;
 
-  class SetExpressCheckoutResponseVo extends AbstractVo
-  {
-    /**
-     * @return bool|mixed
-     */
-    public function getTimestamp()
+    class SetExpressCheckoutResponseVo extends AbstractVo
     {
-      return $this->_getByKey('timestamp');
-    }
+        /**
+         * @return bool|mixed
+         */
+        public function getTimestamp()
+        {
+            return $this->_getByKey('timestamp');
+        }
 
-    // ##########################################
+        // ##########################################
 
-    /**
-     * @return bool|mixed
-     */
-    public function getToken()
-    {
-      return $this->_getByKey('token');
+        /**
+         * @return bool|mixed
+         */
+        public function getToken()
+        {
+            return $this->_getByKey('token');
+        }
     }
-  }

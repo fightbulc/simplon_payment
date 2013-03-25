@@ -1,15 +1,15 @@
 <?php
-  namespace Simplon\Payment\Skrill\PaymentMethods;
+    namespace Simplon\Payment\Skrill\PaymentMethods;
 
-  class SkrillPaymentMethodsSpain extends SkrillPaymentMethodsAllCountries
-  {
-    /**
-     * @return $this
-     */
-    public function useCardMaestro()
+    class SkrillPaymentMethodsSpain extends SkrillPaymentMethodsAllCountries
     {
-      $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::CARD_MAESTRO);
+        /**
+         * @return $this
+         */
+        public function useCardMaestro()
+        {
+            $this->_addEnabledMethodCode(AbstractSkrillPaymentMethods::CARD_MAESTRO);
 
-      return $this;
+            return $this;
+        }
     }
-  }

@@ -1,29 +1,29 @@
 {
-    "name":"simplon/payment",
-    "description":"Flexible solution to enable payments for multiple payment providers.",
-    "homepage":"https://github.com/fightbulc/simplon_payment",
-    "version":"0.5.3",
-    "type":"library",
-    "keywords":["payment"],
-    "license":"MIT",
-    "authors":[
-        {
-            "name":"Tino Ehrich",
-            "email":"opensource@efides.com",
-            "role":"developer"
-        }
-    ],
-
-    "minimum-stability":"dev",
-
-    "require":{
-        "php":">=5.4",
-        "fightbulc/php_curl":"1.0.0"
-    },
-
-    "autoload":{
-        "psr-0":{
-            "Simplon\\Payment":"src/"
-        }
+  "name": "simplon/payment",
+  "description": "Flexible solution to enable payments for multiple payment providers.",
+  "homepage": "https://github.com/fightbulc/simplon_payment",
+  "version": "0.5.4",
+  "type": "library",
+  "keywords": ["payment"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tino Ehrich",
+      "email": "opensource@efides.com",
+      "role": "developer"
     }
+  ],
+
+  "minimum-stability": "dev",
+
+  "require": {
+    "php": ">=5.4",
+    "fightbulc/php_curl": "1.0.0"
+  },
+
+  "autoload": {
+    "psr-0": {
+      "Simplon\\Payment": "src/"
+    }
+  }
 }
