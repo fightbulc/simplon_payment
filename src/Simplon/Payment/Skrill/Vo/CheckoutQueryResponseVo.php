@@ -111,7 +111,14 @@
          */
         public function getSkrillStatus()
         {
-            return $this->_getPostDataByKey('status');
+            $response = $this->_getPostDataByKey('status');
+
+            if($response !== FALSE)
+            {
+                return (int)$response;
+            }
+
+            return FALSE;
         }
 
         // ##########################################
