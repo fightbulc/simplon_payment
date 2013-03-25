@@ -299,5 +299,6 @@ With that example we have finished the checkout cycle for Skrill payments.
 ## Changelog
 
 ### 0.5.4
+- Added ```isPaymentCompleted``` method (```DoExpressCheckoutVo```)
 - Fixed deprecated PayPal response fields for ```DoExpressCheckout```
 - Added descriptions for ```DoExpressCheckout``` response fields ```PaymentStatus```, ```PendingReason``` and ```ReasonCode``` (see ```DoExpressCheckoutVo```)

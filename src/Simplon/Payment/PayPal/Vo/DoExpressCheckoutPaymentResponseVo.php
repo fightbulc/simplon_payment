@@ -132,6 +132,21 @@
         // ##########################################
 
         /**
+         * @return bool
+         */
+        public function isPaymentCompleted()
+        {
+            if($this->getPaymentStatus() === 'completed')
+            {
+                return TRUE;
+            }
+
+            return FALSE;
+        }
+
+        // ##########################################
+
+        /**
          * Reason the payment is pending. You can specify up to 10 payments, where n is a digit between 0 and 9, inclusive.
          * It is one of the following values:
          *
