@@ -1,8 +1,8 @@
 {
   "name": "simplon/payment",
   "description": "Flexible solution to enable payments for multiple payment providers.",
-  "homepage": "https://github.com/fightbulc/simplon_payment",
-  "version": "0.5.5",
+  "homepage": "https://github.com/maniscalcogiuseppe82/simplon_payment",
+  "version": "0.6.0",
   "type": "library",
   "keywords": ["payment"],
   "license": "MIT",
