@@ -1,29 +1,29 @@
 {
-  "name": "maniscalcogiuseppe82/payment",
-  "description": "Flexible solution to enable payments for multiple payment providers.",
-  "homepage": "https://github.com/maniscalcogiuseppe82/simplon_payment",
-  "version": "0.6.0",
-  "type": "library",
-  "keywords": ["payment"],
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Giuseppe Maniscalco",
-      "email": "maniscalcogiuseppe82@gmail.com",
-      "role": "developer"
+    "name": "simplon/payment",
+    "description": "Flexible solution to enable payments for multiple payment providers.",
+    "homepage": "https://github.com/maniscalcogiuseppe82/simplon_payment",
+    "version": "0.6.0",
+    "type": "library",
+    "keywords": ["payment"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tino Ehrich",
+            "email": "opensource@efides.com",
+            "role": "developer"
+        }
+    ],
+
+    "minimum-stability": "dev",
+
+    "require": {
+        "php": ">=5.4",
+        "fightbulc/php_curl": "1.0.0"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "Simplon\\Payment": "src/"
+        }
     }
-  ],
-
-  "minimum-stability": "dev",
-
-  "require": {
-    "php": ">=5.4",
-    "fightbulc/php_curl": "1.0.0"
-  },
-
-  "autoload": {
-    "psr-0": {
-      "Simplon\\Payment": "src/"
-    }
-  }
 }
