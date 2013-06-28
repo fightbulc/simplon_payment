@@ -2,7 +2,7 @@
     "name": "gamespree/payment",
     "description": "Flexible solution to enable payments for multiple payment providers.",
     "homepage": "https://github.com/maniscalcogiuseppe82/simplon_payment",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "type": "library",
     "keywords": ["payment"],
     "license": "MIT",
