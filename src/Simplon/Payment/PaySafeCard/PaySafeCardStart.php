@@ -39,7 +39,7 @@
                 $checkoutDataVo->getNokUrl(),
                 NULL,
                 NULL,
-                NULL
+                $checkoutDataVo->getClientIp()
             );
 
             if ($response->resultCode == 0 && $response->errorCode == 0)

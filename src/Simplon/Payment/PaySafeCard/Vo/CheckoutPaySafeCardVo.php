@@ -14,6 +14,7 @@
         protected $_gameServerId;
         protected $_okUrl;
         protected $_nokUrl;
+        protected $_clientIp;
 
         public function __construct(array $data)
         {
@@ -26,6 +27,7 @@
             $this->_gameServerId = $data['gameServerId'];
             $this->_okUrl = $data['okUrl'];
             $this->_nokUrl = $data['nokUrl'];
+            $this->_clientIp = $data['clientIp'];
 
         }
 
@@ -74,5 +76,9 @@
             return $this->_okUrl;
         }
 
+        public function getClientIp()
+        {
+            return $this->_clientIp;
+        }
 
     }
