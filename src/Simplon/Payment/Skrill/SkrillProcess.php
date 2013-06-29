@@ -52,7 +52,7 @@
             $response = chop($response);
 
             // if NOT code 200 --> filter error message
-            if(! preg_match('/200\s*ok.*?/', $response))
+            if(! preg_match('/200\s*ok.*?/i', $response))
             {
                 // clear response format
                 $response = preg_replace('/\s+/u', ' ', $response);
