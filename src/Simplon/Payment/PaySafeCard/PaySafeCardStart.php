@@ -32,24 +32,24 @@
                 $checkoutDataVo->getUsername(),
                 $checkoutDataVo->getPassword(),
                 $checkoutDataVo->getMtid(),
-                $checkoutDataVo->getGameServerId(),
+                $checkoutDataVo->getSubId(),
                 $checkoutDataVo->getAmount(),
                 $checkoutDataVo->getCurrency(),
                 $checkoutDataVo->getOkUrl(),
                 $checkoutDataVo->getNokUrl(),
-                NULL,
-                NULL,
+                $checkoutDataVo->getMerchantclientId(),
+                $checkoutDataVo->getPnUrl(),
                 $checkoutDataVo->getClientIp()
             );
 
             if ($response->resultCode == 0 && $response->errorCode == 0)
             {
                 return $this->_clientPanelRedurectUrl .
-                    '?mid=' . $checkoutDataVo->getMid() .
-                    '&mtid=' . $checkoutDataVo->getMtid() .
-                    '&amount=' . $checkoutDataVo->getAmount() .
-                    '&currency=' . $checkoutDataVo->getCurrency() .
-                    '&subId=' . $checkoutDataVo->getGameServerId();
+                '?mid=' . $checkoutDataVo->getMid() .
+                '&mtid=' . $checkoutDataVo->getMtid() .
+                '&amount=' . $checkoutDataVo->getAmount() .
+                '&currency=' . $checkoutDataVo->getCurrency() .
+                '&subId=' . $checkoutDataVo->getSubId();
             }
 
             return FALSE;
