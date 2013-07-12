@@ -7,11 +7,6 @@
 
     class PaySafeCardStart extends PaySafeCardBase
     {
-        protected $_resultCode;
-        protected $_errorCode;
-
-        #########################################
-
         public function generateMtid()
         {
             $time = gettimeofday();
@@ -28,7 +23,7 @@
 
             $checkoutDataVo = new CheckoutPaySafeCardVo($data);
 
-            $response = (new SOPGClassicMerchantClient($this->_endPoint))->createDisposition(
+            $response = (new SOPGClassicMerchantClient($checkoutDataVo->getEndPoint()))->createDisposition(
                 $checkoutDataVo->getUsername(),
                 $checkoutDataVo->getPassword(),
                 $checkoutDataVo->getMtid(),
@@ -44,7 +39,7 @@
 
             if ($response->resultCode == 0 && $response->errorCode == 0)
             {
-                return $this->_clientPanelRedurectUrl .
+                return $checkoutDataVo->getUserPanelRedirectUrl() .
                 '?mid=' . $checkoutDataVo->getMid() .
                 '&mtid=' . $checkoutDataVo->getMtid() .
                 '&amount=' . $checkoutDataVo->getAmount() .

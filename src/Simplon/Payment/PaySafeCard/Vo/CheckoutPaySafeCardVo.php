@@ -4,41 +4,37 @@
 
     class CheckoutPaySafeCardVo
     {
-
         protected $_mid;
-
         protected $_username;
         protected $_password;
         protected $_mtid;
         protected $_subId;
         protected $_amount;
         protected $_currency;
-
         protected $_merchantclientId;
         protected $_pnUrl;
-
         protected $_clientIp;
         protected $_okUrl;
         protected $_nokUrl;
+        protected $_endPoint;
+        protected $_userPanelRedirectUrl;
 
         public function __construct(array $data)
         {
             $this->_mid = $data['mid'];
-
             $this->_username = $data['username'];
             $this->_password = $data['password'];
             $this->_mtid = $data['mtid'];
             $this->_subId = $data['subId'];
             $this->_amount = $data['amount'];
             $this->_currency = $data['currency'];
-
             $this->_merchantclientId = $data['merchantclientId'];
             $this->_pnUrl = $data['pnUrl'];
-
             $this->_clientIp = $data['clientIp'];
             $this->_okUrl = $data['okUrl'];
             $this->_nokUrl = $data['nokUrl'];
-
+            $this->_endPoint = $data['endPoint'];
+            $this->_userPanelRedirectUrl = $data['userPanelRedirectUrl'];
         }
 
         /**
@@ -135,6 +131,22 @@
         public function getPnUrl()
         {
             return $this->_pnUrl;
+        }
+
+        /**
+         * @return mixed
+         */
+        public function getEndPoint()
+        {
+            return $this->_endPoint;
+        }
+
+        /**
+         * @return mixed
+         */
+        public function getUserPanelRedirectUrl()
+        {
+            return $this->_userPanelRedirectUrl;
         }
 
     }
