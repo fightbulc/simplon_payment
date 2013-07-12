@@ -8,6 +8,6 @@
      */
     class PaySafeCardBase
     {
-        protected $_endPoint = 'https://soatest.paysafecard.com/psc/services/PscService?wsdl';
-        protected $_clientPanelRedurectUrl = 'https://customer.test.at.paysafecard.com/psccustomer/GetCustomerPanelServlet';
+        protected $_endPoint = 'https://soat.paysafecard.com/psc/services/PscService?wsdl';
+        protected $_clientPanelRedurectUrl = 'https://customer.cc.at.paysafecard.com/psccustomer/GetCustomerPanelServlet';
     }
