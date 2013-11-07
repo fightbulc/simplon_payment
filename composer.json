@@ -23,7 +23,8 @@
 
     "require": {
         "php": ">=5.4",
-        "fightbulc/php_curl": "1.0.0"
+        "fightbulc/php_curl": "1.0.*",
+        "simplon/helper": "0.6.*"
     },
 
     "autoload": {
