@@ -2,9 +2,11 @@
 
     namespace Simplon\Payment\Provider\Stripe;
 
+    use Simplon\Payment\ChargeStateConstants;
     use Simplon\Payment\Iface\ChargeVoInterface;
     use Simplon\Payment\Iface\ProviderAuthInterface;
     use Simplon\Payment\Iface\ProviderInterface;
+    use Simplon\Payment\Provider\Stripe\Vo\ChargePayerVoCustomData;
     use Simplon\Payment\Provider\Stripe\Vo\StripeAuthVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeCardVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeChargeVo;
@@ -12,7 +14,7 @@
     use Simplon\Payment\Provider\Stripe\Vo\StripeCustomersListVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeCustomerVo;
     use Simplon\Payment\Vo\ChargePayerVo;
-    use Simplon\Payment\Vo\ChargeProductVo;
+    use Simplon\Payment\Vo\ChargeResponseVo;
     use Simplon\Payment\Vo\ChargeVo;
 
     class Stripe implements ProviderInterface
@@ -42,6 +44,22 @@
         // ######################################
 
         /**
+         * @param ChargePayerVo $chargePayerVo
+         *
+         * @return ChargePayerVoCustomData
+         */
+        protected function _getChargePayerVoCustomData(ChargePayerVo $chargePayerVo)
+        {
+            /** @var ChargePayerVoCustomData $chargePayerVoCustomData */
+
+            $chargePayerVoCustomData = $chargePayerVo->getCustomDataVo();
+
+            return $chargePayerVoCustomData;
+        }
+
+        // ######################################
+
+        /**
          * @param ChargeVo $chargeVo
          *
          * @return \Simplon\Payment\Vo\ChargeProductVo[]
@@ -60,14 +78,16 @@
          */
         protected function _retrieveCreateCustomer(ChargePayerVo $chargePayerVo)
         {
-            if ($chargePayerVo->isNewPayer() === TRUE)
+            $chargePayerVoCustomData = $this->_getChargePayerVoCustomData($chargePayerVo);
+
+            if (!$chargePayerVoCustomData->getCustomerId())
             {
                 $stripeCustomerVo = (new StripeCustomerVo())->setEmail($chargePayerVo->getEmail());
 
                 return $this->createCustomer($stripeCustomerVo);
             }
 
-            return $this->getCustomer($chargePayerVo->getProviderId());
+            return $this->getCustomer($chargePayerVoCustomData->getCustomerId());
         }
 
         // ######################################
@@ -80,31 +100,15 @@
          */
         protected function _retrieveCreateCard(StripeCustomerVo $stripeCustomerVo, ChargePayerVo $chargePayerVo)
         {
-            if ($chargePayerVo->isNewMean() === TRUE)
+            /** @var ChargePayerVoCustomData $chargePayerVoCustomData */
+            $chargePayerVoCustomData = $chargePayerVo->getCustomDataVo();
+
+            if (!$chargePayerVoCustomData->getCardId())
             {
-                return $this->createCard($stripeCustomerVo, $chargePayerVo->getProviderMeanId());
+                return $this->createCard($stripeCustomerVo, $chargePayerVoCustomData->getCardToken());
             }
 
-            return $this->getCard($chargePayerVo->getProviderId(), $chargePayerVo->getProviderMeanId());
-        }
-
-        // ######################################
-
-        /**
-         * @param ChargeProductVo[] $chargeProductVoMany
-         *
-         * @return int
-         */
-        protected function _calculateTotalAmountCents(array $chargeProductVoMany)
-        {
-            $totalAmountCents = 0;
-
-            foreach ($chargeProductVoMany as $chargeProductVo)
-            {
-                $totalAmountCents += $chargeProductVo->getTotalAmountCents();
-            }
-
-            return $totalAmountCents;
+            return $this->getCard($stripeCustomerVo, $chargePayerVoCustomData->getCardId());
         }
 
         // ######################################
@@ -125,8 +129,8 @@
             // retrieve/create card
             $stripeCardVo = $this->_retrieveCreateCard($stripeCustomerVo, $chargePayerVo);
 
-            // calculate total amount
-            $totalAmountCents = $this->_calculateTotalAmountCents($chargeVo->getChargeProductVoMany());
+            // get total amount
+            $totalAmountCents = $chargeVo->getTotalAmountCents();
 
             // ----------------------------------
 
@@ -136,7 +140,37 @@
                 ->setAmountCents($totalAmountCents)
                 ->setCurrency($chargeVo->getCurrency());
 
-            return $this->createCharge($stripeCustomerVo, $stripeChargeVo);
+            // charge on stripe
+            $stripeChargeVo = $this->createCharge($stripeCustomerVo, $stripeChargeVo);
+
+            // ----------------------------------
+
+            // add stripe payer data
+            $chargePayerVoCustomData = $this->_getChargePayerVoCustomData($chargePayerVo);
+
+            $chargePayerVoCustomData
+                ->setCustomerId($stripeCustomerVo->getId())
+                ->setCardId($stripeCardVo->getId())
+                ->setCardToken(NULL);
+
+            $chargePayerVo->setCustomDataVo($chargePayerVoCustomData);
+
+            // ----------------------------------
+
+            // determine state
+            $chargeState = $stripeChargeVo->getPaid() === TRUE ? ChargeStateConstants::SUCCESS : ChargeStateConstants::FAILED;
+
+            // create chargeResponseVo
+            $chargeResponseVo = (new ChargeResponseVo())
+                ->setReferenceId($chargeVo->getReferenceId())
+                ->setDescription($chargeVo->getDescription())
+                ->setCurrency($chargeVo->getCurrency())
+                ->setChargePayerVo($chargePayerVo)
+                ->setChargeProductVoMany($chargeVo->getChargeProductVoMany())
+                ->setTransactionId($stripeChargeVo->getId())
+                ->setStatus($chargeState);
+
+            return $chargeResponseVo;
         }
 
         // ######################################

@@ -1,33 +1,30 @@
 <?php
 
-    namespace Simplon\Payment\Provider\Stripe\Vo;
+    namespace Simplon\Payment\Provider\Paypal\Vo;
 
     use Simplon\Payment\Iface\ProviderAuthInterface;
 
-    class PayPalAuthVo implements ProviderAuthInterface
+    class PaypalAuthVo implements ProviderAuthInterface
     {
         /** @var String */
-        protected $_username;
+        protected $_clientId;
 
         /** @var String */
-        protected $_password;
-
-        /** @var String */
-        protected $_signature;
+        protected $_secret;
 
         /** @var bool */
-        protected $_sandboxMode = FALSE;
+        protected $_sandbox = FALSE;
 
         // ######################################
 
         /**
          * @param String $password
          *
-         * @return PayPalAuthVo
+         * @return PaypalAuthVo
          */
-        public function setPassword($password)
+        public function setSecret($password)
         {
-            $this->_password = $password;
+            $this->_secret = $password;
 
             return $this;
         }
@@ -37,9 +34,9 @@
         /**
          * @return String
          */
-        public function getPassword()
+        public function getSecret()
         {
-            return $this->_password;
+            return $this->_secret;
         }
 
         // ######################################
@@ -47,11 +44,11 @@
         /**
          * @param boolean $sandboxMode
          *
-         * @return PayPalAuthVo
+         * @return PaypalAuthVo
          */
-        public function setSandboxMode($sandboxMode)
+        public function setSandbox($sandboxMode)
         {
-            $this->_sandboxMode = $sandboxMode;
+            $this->_sandbox = $sandboxMode;
 
             return $this;
         }
@@ -59,35 +56,11 @@
         // ######################################
 
         /**
-         * @return boolean
+         * @return bool
          */
-        public function getSandboxMode()
+        public function getSandbox()
         {
-            return $this->_sandboxMode;
-        }
-
-        // ######################################
-
-        /**
-         * @param String $signature
-         *
-         * @return PayPalAuthVo
-         */
-        public function setSignature($signature)
-        {
-            $this->_signature = $signature;
-
-            return $this;
-        }
-
-        // ######################################
-
-        /**
-         * @return String
-         */
-        public function getSignature()
-        {
-            return $this->_signature;
+            return $this->_sandbox !== FALSE ? TRUE : FALSE;
         }
 
         // ######################################
@@ -95,11 +68,11 @@
         /**
          * @param String $username
          *
-         * @return PayPalAuthVo
+         * @return PaypalAuthVo
          */
-        public function setUsername($username)
+        public function setClientId($username)
         {
-            $this->_username = $username;
+            $this->_clientId = $username;
 
             return $this;
         }
@@ -109,8 +82,8 @@
         /**
          * @return String
          */
-        public function getUsername()
+        public function getClientId()
         {
-            return $this->_username;
+            return $this->_clientId;
         }
     }

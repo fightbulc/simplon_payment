@@ -136,14 +136,53 @@
         /**
          * @return int
          */
-        public function getTotalPriceCents()
+        public function getPriceCentsWithoutVat()
         {
+            $priceCents = $this->getPriceCents();
+
             if ($this->getPriceIncludesVat() === TRUE)
             {
-                return $this->getPriceCents();
+                $priceCents -= $this->getPriceVatCents();
             }
 
-            return $this->getPriceCents() + $this->getPriceVatCents();
+            return (int)$priceCents;
+        }
+
+        // ######################################
+
+        /**
+         * @return int
+         */
+        public function getPriceCentsWithVat()
+        {
+            $priceCents = $this->getPriceCents();
+
+            if ($this->getPriceIncludesVat() !== TRUE)
+            {
+                $priceCents += $this->getPriceVatCents();
+            }
+
+            return (int)$priceCents;
+        }
+
+        // ######################################
+
+        /**
+         * @return int
+         */
+        public function getPriceSubTotalCents()
+        {
+            return $this->getPriceCentsWithoutVat();
+        }
+
+        // ######################################
+
+        /**
+         * @return int
+         */
+        public function getPriceTotalCents()
+        {
+            return $this->getPriceCentsWithVat();
         }
 
         // ######################################
@@ -267,14 +306,63 @@
         /**
          * @return int
          */
-        public function getTotalSurchargeCents()
+        public function getSurchargeCentsWithoutVat()
         {
+            $priceCents = $this->getSurchargeCents();
+
             if ($this->getSurchargeIncludesVat() === TRUE)
             {
-                return $this->getSurchargeCents();
+                $priceCents -= $this->getSurchargeVatCents();
             }
 
-            return $this->getSurchargeCents() + $this->getSurchargeVatCents();
+            return (int)$priceCents;
+        }
+
+        // ######################################
+
+        /**
+         * @return int
+         */
+        public function getSurchargeCentsWithVat()
+        {
+            $priceCents = $this->getSurchargeCents();
+
+            if ($this->getPriceIncludesVat() !== TRUE)
+            {
+                $priceCents += $this->getSurchargeVatCents();
+            }
+
+            return (int)$priceCents;
+        }
+
+        // ######################################
+
+        /**
+         * @return int
+         */
+        public function getSurchargeSubTotalCents()
+        {
+            return $this->getSurchargeCentsWithoutVat();
+        }
+
+        // ######################################
+
+        /**
+         * @return int
+         */
+        public function getSurchargeTotalCents()
+        {
+            return $this->getSurchargeCentsWithVat();
+        }
+
+        // ######################################
+
+        /**
+         * @return int
+         */
+        public function getSubTotalAmountCents()
+        {
+            return $this->getPriceSubTotalCents() + $this->getSurchargeSubTotalCents();
         }
 
         // ######################################
@@ -284,6 +372,16 @@
          */
         public function getTotalAmountCents()
         {
-            return $this->getTotalPriceCents() + $this->getTotalSurchargeCents();
+            return $this->getPriceTotalCents() + $this->getSurchargeTotalCents();
+        }
+
+        // ######################################
+
+        /**
+         * @return int
+         */
+        public function getTotalVatAmountCents()
+        {
+            return $this->getPriceVatCents() + $this->getSurchargeVatCents();
         }
     }

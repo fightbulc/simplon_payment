@@ -2,16 +2,16 @@
 
     namespace Simplon\Payment\Vo;
 
+    use Simplon\Payment\Iface\ChargePayerVoCustomDataInterface;
     use Simplon\Payment\Iface\ChargePayerVoInterface;
 
     class ChargePayerVo implements ChargePayerVoInterface
     {
-        protected $_isNewPayer = FALSE;
-        protected $_providerId;
-        protected $_isNewMean = FALSE;
-        protected $_providerMeanId;
         protected $_name;
         protected $_email;
+
+        /** @var  ChargePayerVoCustomDataInterface */
+        protected $_customDataVo;
 
         // ######################################
 
@@ -64,13 +64,13 @@
         // ######################################
 
         /**
-         * @param mixed $providerId
+         * @param ChargePayerVoCustomDataInterface $customDataVo
          *
-         * @return ChargePayerVo
+         * @return static
          */
-        public function setProviderId($providerId)
+        public function setCustomDataVo(ChargePayerVoCustomDataInterface $customDataVo)
         {
-            $this->_providerId = $providerId;
+            $this->_customDataVo = $customDataVo;
 
             return $this;
         }
@@ -78,82 +78,10 @@
         // ######################################
 
         /**
-         * @return string
+         * @return ChargePayerVoCustomDataInterface
          */
-        public function getProviderId()
+        public function getCustomDataVo()
         {
-            return (string)$this->_providerId;
-        }
-
-        // ######################################
-
-        /**
-         * @param bool $isNew
-         *
-         * @return $this
-         */
-        public function setIsNewPayer($isNew = TRUE)
-        {
-            $this->_isNewPayer = $isNew;
-
-            return $this;
-        }
-
-        // ######################################
-
-        /**
-         * @return bool
-         */
-        public function isNewPayer()
-        {
-            return $this->_isNewPayer !== FALSE ? TRUE : FALSE;
-        }
-
-        // ######################################
-
-        /**
-         * @param mixed $providerMeanId
-         *
-         * @return ChargePayerVo
-         */
-        public function setProviderMeanId($providerMeanId)
-        {
-            $this->_providerMeanId = $providerMeanId;
-
-            return $this;
-        }
-
-        // ######################################
-
-        /**
-         * @return string
-         */
-        public function getProviderMeanId()
-        {
-            return (string)$this->_providerMeanId;
-        }
-
-        // ######################################
-
-        /**
-         * @param bool $isNew
-         *
-         * @return $this
-         */
-        public function setIsNewMean($isNew = TRUE)
-        {
-            $this->_isNewPayer = $isNew;
-
-            return $this;
-        }
-
-        // ######################################
-
-        /**
-         * @return bool
-         */
-        public function isNewMean()
-        {
-            return $this->_isNewMean !== FALSE ? TRUE : FALSE;
+            return $this->_customDataVo;
         }
     }

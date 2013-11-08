@@ -2,7 +2,7 @@
 
     namespace Simplon\Payment;
 
-    class ExceptionConstants
+    class PaymentExceptionConstants
     {
         CONST ERR_API_CODE = 1;
         CONST ERR_API_MESSAGE = 'Provider says: API error';

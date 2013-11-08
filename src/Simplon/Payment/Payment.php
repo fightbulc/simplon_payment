@@ -7,31 +7,31 @@
 
     class Payment
     {
+        /** @var \Simplon\Payment\Iface\ProviderInterface */
         protected $_provider;
-        protected $_chargeVo;
 
         // ######################################
 
         /**
          * @param ProviderInterface $provider
-         * @param ChargeVoInterface $chargeVo
          */
-        public function __construct(ProviderInterface $provider, ChargeVoInterface $chargeVo)
+        public function __construct(ProviderInterface $provider)
         {
             $this->_provider = $provider;
-            $this->_chargeVo = $chargeVo;
 
         }
 
         // ######################################
 
         /**
+         * @param ChargeVoInterface $chargeVo
+         *
          * @return Iface\ChargeResponseVoInterface
          */
-        public function process()
+        public function process(ChargeVoInterface $chargeVo)
         {
-            $chargeResponseVo = $this->_provider->processCharge($this->_chargeVo);
+            $providerChargeResponseVo = $this->_provider->processCharge($chargeVo);
 
-            return $chargeResponseVo;
+            return $providerChargeResponseVo;
         }
     }

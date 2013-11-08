@@ -1,22 +1,25 @@
 <?php
 
-    namespace Simplon\Payment\Provider\Stripe;
+    namespace Simplon\Payment\Provider\Paypal;
 
-    use Simplon\Payment\PaymentExceptionConstants;
     use Simplon\Payment\PaymentException;
+    use Simplon\Payment\PaymentExceptionConstants;
 
-    class StripeApiRequests
+    class PaypalApiRequests
     {
-        protected static $_apiKey;
+        protected static $_clientId;
+        protected static $_secret;
+        protected static $_sandbox = FALSE;
+        protected static $_accessToken;
 
         // ######################################
 
         /**
          * @param $apiKey
          */
-        public static function setApiKey($apiKey)
+        public static function setClientId($apiKey)
         {
-            self::$_apiKey = $apiKey;
+            self::$_clientId = $apiKey;
         }
 
         // ######################################
@@ -24,9 +27,49 @@
         /**
          * @return string
          */
-        protected static function _getApiKey()
+        protected static function _getClientId()
         {
-            return (string)self::$_apiKey;
+            return (string)self::$_clientId;
+        }
+
+        // ######################################
+
+        /**
+         * @param $secret
+         */
+        public static function setSecret($secret)
+        {
+            self::$_secret = $secret;
+        }
+
+        // ######################################
+
+        /**
+         * @return string
+         */
+        protected static function _getSecret()
+        {
+            return (string)self::$_secret;
+        }
+
+        // ######################################
+
+        /**
+         * @param $sandbox
+         */
+        public static function setSandbox($sandbox)
+        {
+            self::$_sandbox = $sandbox;
+        }
+
+        // ######################################
+
+        /**
+         * @return bool
+         */
+        protected static function _isSandbox()
+        {
+            return self::$_sandbox;
         }
 
         // ######################################
@@ -50,6 +93,61 @@
         // ######################################
 
         /**
+         * @return string
+         */
+        protected static function _getUrlApiRoot()
+        {
+            if (self::_isSandbox() === TRUE)
+            {
+                return PaypalApiConstants::URL_API_ROOT_SANDBOX;
+            }
+
+            return PaypalApiConstants::URL_API_ROOT_LIVE;
+        }
+
+        // ######################################
+
+        /**
+         * @return string
+         * @throws \Simplon\Payment\PaymentException
+         */
+        protected static function _getAccessToken()
+        {
+            if (!self::$_accessToken)
+            {
+                $header = [
+                    'Accept: application/json',
+                    'Accept-Language: en_US'
+                ];
+
+                $response = \CURL::init(self::_getUrlApiRoot() . PaypalApiConstants::PATH_OAUTH_TOKEN)
+                    ->setHttpHeader($header)
+                    ->setHttpAuth(CURLAUTH_BASIC)
+                    ->setUserPwd(self::_getClientId() . ":" . self::_getSecret())
+                    ->setPostFields('grant_type=client_credentials')
+                    ->setReturnTransfer(TRUE)
+                    ->execute();
+
+                $response = json_decode($response, TRUE);
+
+                if ($response === NULL || !isset($response['access_token']))
+                {
+                    throw new PaymentException(
+                        PaymentExceptionConstants::ERR_API_CODE,
+                        PaymentExceptionConstants::ERR_API_MESSAGE,
+                        $response
+                    );
+                }
+
+                self::$_accessToken = (string)$response['access_token'];
+            }
+
+            return self::$_accessToken;
+        }
+
+        // ######################################
+
+        /**
          * @param string $requestType
          * @param $pathMethod
          * @param array $postData
@@ -59,9 +157,13 @@
          */
         protected static function _callApi($requestType = 'GET', $pathMethod, array $postData = [])
         {
-            $curl = \CURL::init(StripeApiConstants::URL_API_ROOT . $pathMethod)
-                ->setHttpAuth(CURLAUTH_BASIC)
-                ->setUserPwd(self::_getApiKey() . ":")
+            $header = [
+                'Content-Type: application/json',
+                'Authorization:Bearer ' . self::_getAccessToken(),
+            ];
+
+            $curl = \CURL::init(self::_getUrlApiRoot() . $pathMethod)
+                ->setHttpHeader($header)
                 ->setReturnTransfer(TRUE);
 
             // ----------------------------------
@@ -71,7 +173,7 @@
             {
                 $curl
                     ->setCustomRequest('POST')
-                    ->setPostFields(http_build_query($postData));
+                    ->setPostFields(json_encode($postData));
             }
 
             // ----------------------------------
@@ -102,29 +204,29 @@
             {
                 $response = json_decode($response, TRUE);
 
-                if (isset($response['error']))
+                if (isset($response['debug_id']))
                 {
-                    $error = $response['error'];
+                    $error = $response;
 
-                    if ((string)$error['type'] === 'api_error')
+                    if ((string)$error['name'] === 'MALFORMED_REQUEST')
                     {
                         $code = PaymentExceptionConstants::ERR_API_CODE;
                         $message = PaymentExceptionConstants::ERR_API_MESSAGE;
-                        unset($error['type']);
+                        unset($error['name']);
                     }
 
-                    elseif ((string)$error['type'] === 'invalid_request_error')
+                    elseif ((string)$error['name'] === 'VALIDATION_ERROR')
                     {
                         $code = PaymentExceptionConstants::ERR_REQUEST_CODE;
                         $message = PaymentExceptionConstants::ERR_REQUEST_MESSAGE;
-                        unset($error['type']);
+                        unset($error['name']);
                     }
 
-                    elseif ((string)$error['type'] === 'card_error')
+                    elseif ((string)$error['name'] === 'card_error')
                     {
                         $code = PaymentExceptionConstants::ERR_PAYMENT_DATA_CODE;
                         $message = PaymentExceptionConstants::ERR_PAYMENT_DATA_MESSAGE;
-                        unset($error['type']);
+                        unset($error['name']);
                     }
 
                     else

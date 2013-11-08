@@ -13,4 +13,8 @@
         public function getChargePayerVo();
 
         public function getChargeProductVoMany();
+
+        public function getTotalAmountCents();
+
+        public function getCustomDataVo();
     }

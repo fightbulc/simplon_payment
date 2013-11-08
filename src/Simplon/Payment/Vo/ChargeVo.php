@@ -2,9 +2,10 @@
 
     namespace Simplon\Payment\Vo;
 
-    use Simplon\Payment\Iface\ChargeVoInterface;
     use Simplon\Payment\Iface\ChargePayerVoInterface;
     use Simplon\Payment\Iface\ChargeProductVoInterface;
+    use Simplon\Payment\Iface\ChargeVoCustomDataInterface;
+    use Simplon\Payment\Iface\ChargeVoInterface;
 
     class ChargeVo implements ChargeVoInterface
     {
@@ -18,12 +19,15 @@
         /** @var  ChargeProductVo[] */
         protected $_chargeProductVoMany;
 
+        /** @var  ChargeVoCustomDataInterface */
+        protected $_customDataVo;
+
         // ######################################
 
         /**
          * @param ChargePayerVoInterface $chargePayerVo
          *
-         * @return ChargeVo
+         * @return static
          */
         public function setChargePayerVo(ChargePayerVoInterface $chargePayerVo)
         {
@@ -47,9 +51,9 @@
         /**
          * @param ChargeProductVoInterface $chargeProductVo
          *
-         * @return ChargeVo
+         * @return static
          */
-        public function setChargeProductVo(ChargeProductVoInterface $chargeProductVo)
+        public function addChargeProductVo(ChargeProductVoInterface $chargeProductVo)
         {
             $this->_chargeProductVoMany[] = $chargeProductVo;
 
@@ -61,7 +65,7 @@
         /**
          * @param mixed $chargeProductVoMany
          *
-         * @return ChargeVo
+         * @return static
          */
         public function setChargeProductVoMany(array $chargeProductVoMany)
         {
@@ -83,9 +87,63 @@
         // ######################################
 
         /**
+         * @return int
+         */
+        public function getSubTotalAmountCents()
+        {
+            $subTotalAmountCents = 0;
+            $chargeProductVoMany = $this->getChargeProductVoMany();
+
+            foreach ($chargeProductVoMany as $chargeProductVo)
+            {
+                $subTotalAmountCents += $chargeProductVo->getSubTotalAmountCents();
+            }
+
+            return $subTotalAmountCents;
+        }
+
+        // ######################################
+
+        /**
+         * @return int
+         */
+        public function getTotalAmountCents()
+        {
+            $totalAmountCents = 0;
+            $chargeProductVoMany = $this->getChargeProductVoMany();
+
+            foreach ($chargeProductVoMany as $chargeProductVo)
+            {
+                $totalAmountCents += $chargeProductVo->getTotalAmountCents();
+            }
+
+            return $totalAmountCents;
+        }
+
+        // ######################################
+
+        /**
+         * @return int
+         */
+        public function getTotalVatAmountCents()
+        {
+            $totalVatAmountCents = 0;
+            $chargeProductVoMany = $this->getChargeProductVoMany();
+
+            foreach ($chargeProductVoMany as $chargeProductVo)
+            {
+                $totalVatAmountCents += $chargeProductVo->getTotalVatAmountCents();
+            }
+
+            return $totalVatAmountCents;
+        }
+
+        // ######################################
+
+        /**
          * @param mixed $currency
          *
-         * @return ChargeVo
+         * @return static
          */
         public function setCurrency($currency)
         {
@@ -109,7 +167,7 @@
         /**
          * @param mixed $description
          *
-         * @return ChargeVo
+         * @return static
          */
         public function setDescription($description)
         {
@@ -133,7 +191,7 @@
         /**
          * @param mixed $referenceId
          *
-         * @return ChargeVo
+         * @return static
          */
         public function setReferenceId($referenceId)
         {
@@ -150,5 +208,29 @@
         public function getReferenceId()
         {
             return (string)$this->_referenceId;
+        }
+
+        // ######################################
+
+        /**
+         * @param ChargeVoCustomDataInterface $customDataVo
+         *
+         * @return static
+         */
+        public function setCustomDataVo(ChargeVoCustomDataInterface $customDataVo)
+        {
+            $this->_customDataVo = $customDataVo;
+
+            return $this;
+        }
+
+        // ######################################
+
+        /**
+         * @return ChargeVoCustomDataInterface
+         */
+        public function getCustomDataVo()
+        {
+            return $this->_customDataVo;
         }
     }
