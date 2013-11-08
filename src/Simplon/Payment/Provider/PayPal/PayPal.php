@@ -2,6 +2,7 @@
 
     namespace Simplon\Payment\Provider\Paypal;
 
+    use Simplon\Payment\ChargeStateConstants;
     use Simplon\Payment\Iface\ChargeVoInterface;
     use Simplon\Payment\Iface\ProviderAuthInterface;
     use Simplon\Payment\Iface\ProviderInterface;
@@ -10,6 +11,7 @@
     use Simplon\Payment\Provider\Paypal\Vo\PaypalAuthVo;
     use Simplon\Payment\Provider\Paypal\Vo\PaypalChargeVo;
     use Simplon\Payment\Vo\ChargePayerVo;
+    use Simplon\Payment\Vo\ChargeResponseVo;
     use Simplon\Payment\Vo\ChargeVo;
 
     class Paypal implements ProviderInterface
@@ -87,7 +89,7 @@
         /**
          * @param ChargeVoInterface $chargeVo
          *
-         * @return \Simplon\Payment\Iface\ChargeResponseVoInterface|void
+         * @return \Simplon\Payment\Iface\ChargeResponseVoInterface|ChargeResponseVo
          */
         public function processCharge(ChargeVoInterface $chargeVo)
         {
@@ -98,12 +100,31 @@
             // create payment
             if (!$chargeVoCustomData->getPaymentId())
             {
-                $this->createCharge($chargeVo);
+                $paypalChargeVo = $this->createCharge($chargeVo);
+            }
+
+            // execute payment
+            else
+            {
+                $paypalChargeVo = $this->executeCharge($chargeVo);
             }
 
             // ----------------------------------
 
-            // execute payment
+            // determine state
+            $chargeState = $paypalChargeVo->getState() === 'completed' ? ChargeStateConstants::SUCCESS : ChargeStateConstants::FAILED;
+
+            // create chargeResponseVo
+            $chargeResponseVo = (new ChargeResponseVo())
+                ->setReferenceId($chargeVo->getReferenceId())
+                ->setDescription($chargeVo->getDescription())
+                ->setCurrency($chargeVo->getCurrency())
+                ->setChargePayerVo($chargeVo->getChargePayerVo())
+                ->setChargeProductVoMany($chargeVo->getChargeProductVoMany())
+                ->setTransactionId($paypalChargeVo->getId())
+                ->setStatus($chargeState);
+
+            return $chargeResponseVo;
         }
 
         // ######################################

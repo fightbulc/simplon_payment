@@ -10,6 +10,7 @@
         protected $_id;
         protected $_createTime;
         protected $_updateTime;
+        protected $_parentPayment;
         protected $_state;
         protected $_intent;
         protected $_payer;
@@ -274,5 +275,29 @@
         public function getUpdateTime()
         {
             return $this->_updateTime;
+        }
+
+        // ######################################
+
+        /**
+         * @param mixed $parentPayment
+         *
+         * @return PaypalChargeVo
+         */
+        public function setParentPayment($parentPayment)
+        {
+            $this->_parentPayment = $parentPayment;
+
+            return $this;
+        }
+
+        // ######################################
+
+        /**
+         * @return string
+         */
+        public function getParentPayment()
+        {
+            return (string)$this->_parentPayment;
         }
     }
