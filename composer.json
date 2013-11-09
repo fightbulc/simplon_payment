@@ -1,21 +1,16 @@
 {
 
     "name": "simplon/payment",
-    "description": "Flexible solution to enable payments for multiple payment providers.",
+    "description": "Open/Unified payment solution which adopts to payment providers via modules.",
     "homepage": "https://github.com/fightbulc/simplon_payment",
-    "version": "0.5.8",
+    "version": "1.0.0",
     "type": "library",
-    "keywords": ["payment"],
+    "keywords": ["payment", "paypal", "stripe", "rest", "modules"],
     "license": "MIT",
     "authors": [
         {
             "name": "Tino Ehrich",
             "email": "opensource@efides.com",
-            "role": "developer"
-        },
-        {
-            "name": "Giuseppe",
-            "email": "maniscalcogiuseppe82@gmail.com",
             "role": "developer"
         }
     ],
