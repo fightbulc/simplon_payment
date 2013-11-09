@@ -158,7 +158,7 @@
             // ----------------------------------
 
             // determine state
-            $chargeState = $stripeChargeVo->getPaid() === TRUE ? ChargeStateConstants::SUCCESS : ChargeStateConstants::FAILED;
+            $chargeState = $stripeChargeVo->getPaid() === TRUE ? ChargeStateConstants::COMPLETED : ChargeStateConstants::FAILED;
 
             // create chargeResponseVo
             $chargeResponseVo = (new ChargeResponseVo())

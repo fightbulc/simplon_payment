@@ -111,9 +111,6 @@
 
             // ----------------------------------
 
-            // determine state
-            $chargeState = $paypalChargeVo->getState() === 'completed' ? ChargeStateConstants::SUCCESS : ChargeStateConstants::FAILED;
-
             // create chargeResponseVo
             $chargeResponseVo = (new ChargeResponseVo())
                 ->setReferenceId($chargeVo->getReferenceId())
@@ -122,9 +119,51 @@
                 ->setChargePayerVo($chargeVo->getChargePayerVo())
                 ->setChargeProductVoMany($chargeVo->getChargeProductVoMany())
                 ->setTransactionId($paypalChargeVo->getId())
-                ->setStatus($chargeState);
+                ->setStatus($this->_convertPaypalStateToSimplonState($paypalChargeVo->getState()));
 
             return $chargeResponseVo;
+        }
+
+        // ######################################
+
+        /**
+         * @param $paypalState
+         *
+         * @return string
+         */
+        protected function _convertPaypalStateToSimplonState($paypalState)
+        {
+            switch ($paypalState)
+            {
+                case 'created':
+                    $state = ChargeStateConstants::CREATED;
+                    break;
+
+                case 'approved':
+                    $state = ChargeStateConstants::APPROVED;
+                    break;
+
+                case 'completed':
+                    $state = ChargeStateConstants::COMPLETED;
+                    break;
+
+                case 'failed':
+                    $state = ChargeStateConstants::FAILED;
+                    break;
+
+                case 'canceled':
+                    $state = ChargeStateConstants::INVALID;
+                    break;
+
+                case 'expired':
+                    $state = ChargeStateConstants::INVALID;
+                    break;
+
+                default:
+                    $state = ChargeStateConstants::UNKNOWN;
+            }
+
+            return $state;
         }
 
         // ######################################

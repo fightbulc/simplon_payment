@@ -4,10 +4,10 @@
 
     class ChargeStateConstants
     {
-        CONST INITIALISED = 'initialised';
-        CONST PROCESSING = 'processing';
-        CONST SUCCESS = 'success';
-        CONST DELAYED = 'delayed';
-        CONST REFUNDED = 'refunded';
+        CONST CREATED = 'created';
+        CONST APPROVED = 'approved';
+        CONST COMPLETED = 'completed';
         CONST FAILED = 'failed';
-    } 
+        CONST INVALID = 'invalid';
+        CONST UNKNOWN = 'unknown';
+    }
