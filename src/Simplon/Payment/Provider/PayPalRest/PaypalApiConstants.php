@@ -1,6 +1,6 @@
 <?php
 
-    namespace Simplon\Payment\Provider\Paypal;
+    namespace Simplon\Payment\Provider\PaypalRest;
 
     class PaypalApiConstants
     {

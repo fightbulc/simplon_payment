@@ -1,8 +1,8 @@
 <?php
 
-    namespace Simplon\Payment\Provider\Paypal\Vo;
+    namespace Simplon\Payment\Provider\PaypalRest\Vo;
 
-    class PaypalChargeLinksVo
+    class PaypalSaleLinksVo
     {
         protected $_links = [];
 
@@ -11,7 +11,7 @@
         /**
          * @param array $data
          *
-         * @return PaypalChargeLinksVo
+         * @return PaypalSaleLinksVo
          */
         public function setData(array $data)
         {
@@ -57,9 +57,9 @@
         /**
          * @return bool|string
          */
-        public function getUrlApproval()
+        public function getUrlRefund()
         {
-            return $this->_getUrlByRel('approval_url');
+            return $this->_getUrlByRel('refund');
         }
 
         // ######################################
@@ -67,9 +67,9 @@
         /**
          * @return bool|string
          */
-        public function getUrlExecute()
+        public function getUrlParentPayment()
         {
-            return $this->_getUrlByRel('execute');
+            return $this->_getUrlByRel('parent_payment');
         }
 
         // ######################################
@@ -77,7 +77,7 @@
         /**
          * @return bool|string
          */
-        public function getUrlPayment()
+        public function getUrlSale()
         {
             return $this->_getUrlByRel('self');
         }

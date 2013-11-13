@@ -7,32 +7,7 @@
     class ChargeResponseVo extends ChargeVo implements ChargeResponseVoInterface
     {
         protected $_transactionId;
-        protected $_response;
         protected $_status;
-
-        // ######################################
-
-        /**
-         * @param mixed $response
-         *
-         * @return ChargeResponseVo
-         */
-        public function setResponse($response)
-        {
-            $this->_response = $response;
-
-            return $this;
-        }
-
-        // ######################################
-
-        /**
-         * @return string
-         */
-        public function getResponse()
-        {
-            return (string)$this->_response;
-        }
 
         // ######################################
 

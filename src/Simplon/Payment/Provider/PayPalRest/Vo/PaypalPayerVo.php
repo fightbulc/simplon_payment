@@ -1,6 +1,6 @@
 <?php
 
-    namespace Simplon\Payment\Provider\Paypal\Vo;
+    namespace Simplon\Payment\Provider\PaypalRest\Vo;
 
     use Simplon\Helper\VoSetDataFactory;
 

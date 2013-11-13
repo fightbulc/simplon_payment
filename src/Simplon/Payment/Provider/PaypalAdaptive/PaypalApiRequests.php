@@ -1,25 +1,26 @@
 <?php
 
-    namespace Simplon\Payment\Provider\Paypal;
+    namespace Simplon\Payment\Provider\PaypalAdaptive;
 
     use Simplon\Payment\PaymentException;
     use Simplon\Payment\PaymentExceptionConstants;
 
     class PaypalApiRequests
     {
-        protected static $_clientId;
-        protected static $_secret;
+        protected static $_username;
+        protected static $_password;
+        protected static $_signature;
+        protected static $_appId;
         protected static $_sandbox = FALSE;
-        protected static $_accessToken;
 
         // ######################################
 
         /**
-         * @param $apiKey
+         * @param $username
          */
-        public static function setClientId($apiKey)
+        public static function setUsername($username)
         {
-            self::$_clientId = $apiKey;
+            self::$_username = $username;
         }
 
         // ######################################
@@ -27,19 +28,19 @@
         /**
          * @return string
          */
-        protected static function _getClientId()
+        protected static function _getUsername()
         {
-            return (string)self::$_clientId;
+            return (string)self::$_username;
         }
 
         // ######################################
 
         /**
-         * @param $secret
+         * @param $password
          */
-        public static function setSecret($secret)
+        public static function setPassword($password)
         {
-            self::$_secret = $secret;
+            self::$_password = $password;
         }
 
         // ######################################
@@ -47,9 +48,49 @@
         /**
          * @return string
          */
-        protected static function _getSecret()
+        protected static function _getPassword()
         {
-            return (string)self::$_secret;
+            return (string)self::$_password;
+        }
+
+        // ######################################
+
+        /**
+         * @param $signature
+         */
+        public static function setSignature($signature)
+        {
+            self::$_signature = $signature;
+        }
+
+        // ######################################
+
+        /**
+         * @return string
+         */
+        protected static function _getSignature()
+        {
+            return (string)self::$_signature;
+        }
+
+        // ######################################
+
+        /**
+         * @param $appId
+         */
+        public static function setAppId($appId)
+        {
+            self::$_appId = $appId;
+        }
+
+        // ######################################
+
+        /**
+         * @return string
+         */
+        protected static function _getAppId()
+        {
+            return (string)self::$_appId;
         }
 
         // ######################################
@@ -75,6 +116,21 @@
         // ######################################
 
         /**
+         * @return string
+         */
+        protected static function _getUrlApiRoot()
+        {
+            if (self::_isSandbox() === TRUE)
+            {
+                return PaypalApiConstants::URL_API_ROOT_SANDBOX;
+            }
+
+            return PaypalApiConstants::URL_API_ROOT_LIVE;
+        }
+
+        // ######################################
+
+        /**
          * @param $pathMethod
          * @param array $pathParams
          *
@@ -93,61 +149,6 @@
         // ######################################
 
         /**
-         * @return string
-         */
-        protected static function _getUrlApiRoot()
-        {
-            if (self::_isSandbox() === TRUE)
-            {
-                return PaypalApiConstants::URL_API_ROOT_SANDBOX;
-            }
-
-            return PaypalApiConstants::URL_API_ROOT_LIVE;
-        }
-
-        // ######################################
-
-        /**
-         * @return string
-         * @throws \Simplon\Payment\PaymentException
-         */
-        protected static function _getAccessToken()
-        {
-            if (!self::$_accessToken)
-            {
-                $header = [
-                    'Accept: application/json',
-                    'Accept-Language: en_US'
-                ];
-
-                $response = \CURL::init(self::_getUrlApiRoot() . PaypalApiConstants::PATH_OAUTH_TOKEN)
-                    ->setHttpHeader($header)
-                    ->setHttpAuth(CURLAUTH_BASIC)
-                    ->setUserPwd(self::_getClientId() . ":" . self::_getSecret())
-                    ->setPostFields('grant_type=client_credentials')
-                    ->setReturnTransfer(TRUE)
-                    ->execute();
-
-                $response = json_decode($response, TRUE);
-
-                if ($response === NULL || !isset($response['access_token']))
-                {
-                    throw new PaymentException(
-                        PaymentExceptionConstants::ERR_API_CODE,
-                        PaymentExceptionConstants::ERR_API_MESSAGE,
-                        $response
-                    );
-                }
-
-                self::$_accessToken = (string)$response['access_token'];
-            }
-
-            return self::$_accessToken;
-        }
-
-        // ######################################
-
-        /**
          * @param string $requestType
          * @param $pathMethod
          * @param array $postData
@@ -158,8 +159,11 @@
         protected static function _callApi($requestType = 'GET', $pathMethod, array $postData = [])
         {
             $header = [
-                'Content-Type: application/json',
-                'Authorization:Bearer ' . self::_getAccessToken(),
+                'X-PAYPAL-SECURITY-USERID: ' . self::_getUsername(),
+                'X-PAYPAL-SECURITY-PASSWORD: ' . self::_getPassword(),
+                'X-PAYPAL-REQUEST-DATA-FORMAT: NV',
+                'X-PAYPAL-RESPONSE-DATA-FORMAT: JSON',
+                'X-PAYPAL-APPLICATION-ID: ' . self::_getAppId(),
             ];
 
             $curl = \CURL::init(self::_getUrlApiRoot() . $pathMethod)
@@ -173,15 +177,7 @@
             {
                 $curl
                     ->setCustomRequest('POST')
-                    ->setPostFields(json_encode($postData));
-            }
-
-            // ----------------------------------
-            // handle delete
-
-            if ($requestType === 'DELETE')
-            {
-                $curl->setCustomRequest('DELETE');
+                    ->setPostFields(http_build_query($postData));
             }
 
             // ----------------------------------
@@ -248,61 +244,12 @@
 
         /**
          * @param $pathMethod
-         * @param array $placeholder
-         *
-         * @return bool|mixed
-         */
-        public static function retrieve($pathMethod, array $placeholder = [])
-        {
-            if (!empty($placeholder))
-            {
-                $pathMethod = self::_parsePathPlaceholders($pathMethod, $placeholder);
-            }
-
-            return self::_callApi('GET', $pathMethod);
-        }
-
-        // ######################################
-
-        /**
-         * @param $pathMethod
          * @param array $postData
          *
          * @return bool|mixed
          */
-        public static function create($pathMethod, array $postData)
+        public static function request($pathMethod, array $postData)
         {
             return self::_callApi('POST', $pathMethod, $postData);
-        }
-
-        // ######################################
-
-        /**
-         * @param $pathMethod
-         * @param array $placeholder
-         * @param array $postData
-         *
-         * @return bool|mixed
-         */
-        public static function update($pathMethod, array $placeholder, array $postData)
-        {
-            $pathMethod = self::_parsePathPlaceholders($pathMethod, $placeholder);
-
-            return self::_callApi('POST', $pathMethod, $postData);
-        }
-
-        // ######################################
-
-        /**
-         * @param $pathMethod
-         * @param array $placeholder
-         *
-         * @return bool|mixed
-         */
-        public static function delete($pathMethod, array $placeholder)
-        {
-            $pathMethod = self::_parsePathPlaceholders($pathMethod, $placeholder);
-
-            return self::_callApi('DELETE', $pathMethod);
         }
     }

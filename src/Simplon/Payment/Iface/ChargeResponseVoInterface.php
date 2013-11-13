@@ -6,7 +6,5 @@
     {
         public function getTransactionId();
 
-        public function getResponse();
-
         public function getStatus();
     }

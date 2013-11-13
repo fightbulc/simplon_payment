@@ -26,7 +26,7 @@
         {
             /** @var $authVo StripeAuthVo */
 
-            StripeApiRequests::setApiKey($authVo->getApiKey());
+            StripeApiRequests::setApiKey($authVo->getPrivateKey());
         }
 
         // ######################################
