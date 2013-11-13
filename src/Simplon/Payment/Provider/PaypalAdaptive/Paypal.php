@@ -5,10 +5,9 @@
     use Simplon\Payment\Iface\ProviderAuthInterface;
     use Simplon\Payment\PaymentException;
     use Simplon\Payment\PaymentExceptionConstants;
-    use Simplon\Payment\Provider\PaypalAdaptive\Vo\ChargeCustomDataVo;
+    use Simplon\Payment\Provider\PaypalAdaptive\Vo\ChargeValidationVo;
     use Simplon\Payment\Provider\PaypalAdaptive\Vo\PaypalAuthVo;
     use Simplon\Payment\Provider\PaypalAdaptive\Vo\PaypalChargeVo;
-    use Simplon\Payment\Vo\ChargeVo;
 
     class Paypal
     {
@@ -82,22 +81,21 @@
         // ######################################
 
         /**
-         * @param ChargeVo $chargeVo
+         * @param ChargeValidationVo $chargeValidationVo
          *
          * @return bool
          * @throws \Simplon\Payment\PaymentException
          */
-        public function isValidCharge(ChargeVo $chargeVo)
+        public function isValidCharge(ChargeValidationVo $chargeValidationVo)
         {
-            $response = $this->_isValidCharge($chargeVo);
+            $response = $this->_isValidCharge($chargeValidationVo);
 
             if ($response !== FALSE)
             {
                 return TRUE;
             }
 
-            /** @var ChargeCustomDataVo $chargeCustomDataVo */
-            $chargeCustomDataVo = $chargeVo->getCustomDataVo();
+            // ----------------------------------
 
             $appId = $this->_getAuthVo()
                 ->getAppId();
@@ -107,7 +105,7 @@
                 PaymentExceptionConstants::ERR_PAYMENT_DATA_MESSAGE,
                 [
                     'provider' => 'Paypal Adaptive Payments',
-                    'payKey'   => $chargeCustomDataVo->getPayKey(),
+                    'payKey'   => $chargeValidationVo->getPayKey(),
                     'appId'    => $appId,
                 ]
             );
@@ -116,17 +114,14 @@
         // ######################################
 
         /**
-         * @param ChargeVo $chargeVo
+         * @param ChargeValidationVo $chargeValidationVo
          *
          * @return bool
          */
-        protected function _isValidCharge(ChargeVo $chargeVo)
+        protected function _isValidCharge(ChargeValidationVo $chargeValidationVo)
         {
-            /** @var ChargeCustomDataVo $chargeCustomDataVo */
-            $chargeCustomDataVo = $chargeVo->getCustomDataVo();
-
             // get charge from paypal
-            $paypalChargeVo = $this->getCharge($chargeCustomDataVo->getPayKey());
+            $paypalChargeVo = $this->getCharge($chargeValidationVo->getPayKey());
 
             if ($paypalChargeVo === FALSE)
             {
@@ -149,7 +144,7 @@
 
             $validCurrency = $this->_testStringIsEqual(
                 $paypalChargeVo->getCurrencyCode(),
-                $chargeVo->getCurrency()
+                $chargeValidationVo->getCurrency()
             );
 
             if ($validCurrency === FALSE)
@@ -175,10 +170,8 @@
                 ->getPaypalChargePaymentInfoVo()
                 ->getPaypalChargePaymentInfoReceiverVo();
 
-            /** @var ChargeCustomDataVo $chargeCustomDataVo */
-            $chargeCustomDataVo = $chargeVo->getCustomDataVo();
-
-            $accountEmail = $this->_getAuthVo()
+            $accountEmail = $this
+                ->_getAuthVo()
                 ->getEmail();
 
             $validReceiver = $this->_testStringIsEqual(
@@ -193,7 +186,7 @@
 
             // ------------------------------
 
-            $validAmount = $paypalChargePaymentInfoReceiverVo->getAmountCents() === $chargeVo->getTotalAmountCents() ? TRUE : FALSE;
+            $validAmount = $paypalChargePaymentInfoReceiverVo->getAmountCents() === $chargeValidationVo->getTotalAmountCents() ? TRUE : FALSE;
 
             if ($validAmount === FALSE)
             {

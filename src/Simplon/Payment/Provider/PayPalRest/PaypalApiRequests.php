@@ -236,7 +236,7 @@
                 {
                     $error = $response;
 
-                    if ((string)$error['name'] === 'MALFORMED_REQUEST')
+                    if ((string)$error['name'] === 'INTERNAL_SERVICE_ERROR')
                     {
                         $code = PaymentExceptionConstants::ERR_API_CODE;
                         $message = PaymentExceptionConstants::ERR_API_MESSAGE;
@@ -247,13 +247,6 @@
                     {
                         $code = PaymentExceptionConstants::ERR_REQUEST_CODE;
                         $message = PaymentExceptionConstants::ERR_REQUEST_MESSAGE;
-                        unset($error['name']);
-                    }
-
-                    elseif ((string)$error['name'] === 'card_error')
-                    {
-                        $code = PaymentExceptionConstants::ERR_PAYMENT_DATA_CODE;
-                        $message = PaymentExceptionConstants::ERR_PAYMENT_DATA_MESSAGE;
                         unset($error['name']);
                     }
 

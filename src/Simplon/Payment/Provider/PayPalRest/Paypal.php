@@ -7,7 +7,7 @@
     use Simplon\Payment\Iface\ProviderAuthInterface;
     use Simplon\Payment\Iface\ProviderInterface;
     use Simplon\Payment\Provider\PaypalRest\Vo\ChargeCustomDataVo;
-    use Simplon\Payment\Provider\PaypalRest\Vo\ChargePayerVoCustomData;
+    use Simplon\Payment\Provider\PaypalRest\Vo\ChargePayerCustomDataVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\PaypalAuthVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\PaypalChargeVo;
     use Simplon\Payment\Vo\ChargePayerVo;
@@ -86,11 +86,11 @@
         /**
          * @param ChargePayerVo $chargePayerVo
          *
-         * @return ChargePayerVoCustomData
+         * @return ChargePayerCustomDataVo
          */
         protected function _getChargePayerVoCustomData(ChargePayerVo $chargePayerVo)
         {
-            /** @var ChargePayerVoCustomData $chargePayerVoCustomData */
+            /** @var ChargePayerCustomDataVo $chargePayerVoCustomData */
 
             $chargePayerVoCustomData = $chargePayerVo->getCustomDataVo();
 
@@ -254,17 +254,17 @@
         // ######################################
 
         /**
-         * @param ChargePayerVoCustomData $chargePayerVoCustomData
+         * @param ChargePayerCustomDataVo $chargePayerVoCustomData
          *
          * @return array
          */
-        protected function _createChargePayerData(ChargePayerVoCustomData $chargePayerVoCustomData)
+        protected function _createChargePayerData(ChargePayerCustomDataVo $chargePayerVoCustomData)
         {
             $payerData = [
-                'payment_method' => $chargePayerVoCustomData->getMethod(),
+                'payment_method' => $chargePayerVoCustomData->getPayMethod(),
             ];
 
-            if ($chargePayerVoCustomData->getMethod() === 'credit_card')
+            if ($chargePayerVoCustomData->getPayMethod() === 'credit_card')
             {
                 // handle credit card data
             }
@@ -338,7 +338,7 @@
             /** @var ChargeCustomDataVo $chargeCustomDataVo */
             $chargeCustomDataVo = $chargeVo->getCustomDataVo();
 
-            /** @var ChargePayerVoCustomData $chargePayerVoCustomData */
+            /** @var ChargePayerCustomDataVo $chargePayerVoCustomData */
             $chargePayerVoCustomData = $this->_getChargePayerVoCustomData($chargeVo->getChargePayerVo());
 
             // ----------------------------------
@@ -370,7 +370,7 @@
             /** @var ChargeCustomDataVo $chargeCustomDataVo */
             $chargeCustomDataVo = $chargeVo->getCustomDataVo();
 
-            /** @var ChargePayerVoCustomData $chargePayerVoCustomData */
+            /** @var ChargePayerCustomDataVo $chargePayerVoCustomData */
             $chargePayerVoCustomData = $this->_getChargePayerVoCustomData($chargeVo->getChargePayerVo());
 
             // ----------------------------------

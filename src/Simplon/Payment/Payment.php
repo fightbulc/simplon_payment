@@ -18,7 +18,6 @@
         public function __construct(ProviderInterface $provider)
         {
             $this->_provider = $provider;
-
         }
 
         // ######################################

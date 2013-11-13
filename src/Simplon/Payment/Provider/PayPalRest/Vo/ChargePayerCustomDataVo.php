@@ -4,9 +4,9 @@
 
     use Simplon\Payment\Iface\ChargePayerVoCustomDataInterface;
 
-    class ChargePayerVoCustomData implements ChargePayerVoCustomDataInterface
+    class ChargePayerCustomDataVo implements ChargePayerVoCustomDataInterface
     {
-        protected $_method;
+        protected $_payMethod;
         protected $_payerId;
 
         // ######################################
@@ -14,7 +14,7 @@
         /**
          * @param mixed $payerId
          *
-         * @return ChargePayerVoCustomData
+         * @return ChargePayerCustomDataVo
          */
         public function setPayerId($payerId)
         {
@@ -38,11 +38,11 @@
         /**
          * @param mixed $method
          *
-         * @return ChargePayerVoCustomData
+         * @return ChargePayerCustomDataVo
          */
-        public function setMethod($method)
+        public function setPayMethod($method)
         {
-            $this->_method = $method;
+            $this->_payMethod = $method;
 
             return $this;
         }
@@ -52,8 +52,8 @@
         /**
          * @return string
          */
-        public function getMethod()
+        public function getPayMethod()
         {
-            return (string)$this->_method;
+            return (string)$this->_payMethod;
         }
     }
