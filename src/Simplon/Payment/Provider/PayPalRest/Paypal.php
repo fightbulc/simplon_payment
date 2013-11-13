@@ -6,8 +6,11 @@
     use Simplon\Payment\Iface\ChargeVoInterface;
     use Simplon\Payment\Iface\ProviderAuthInterface;
     use Simplon\Payment\Iface\ProviderInterface;
+    use Simplon\Payment\PaymentException;
+    use Simplon\Payment\PaymentExceptionConstants;
     use Simplon\Payment\Provider\PaypalRest\Vo\ChargeCustomDataVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\ChargePayerCustomDataVo;
+    use Simplon\Payment\Provider\PaypalRest\Vo\ChargeValidationVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\PaypalAuthVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\PaypalChargeVo;
     use Simplon\Payment\Vo\ChargePayerVo;
@@ -405,5 +408,128 @@
             );
 
             return (new PaypalChargeVo())->setData($response);
+        }
+
+        // ######################################
+
+        /**
+         * @param ChargeValidationVo $chargeValidationVo
+         *
+         * @return bool
+         * @throws \Simplon\Payment\PaymentException
+         */
+        public function isValidCharge(ChargeValidationVo $chargeValidationVo)
+        {
+            $response = $this->_isValidCharge($chargeValidationVo);
+
+            if ($response !== FALSE)
+            {
+                return TRUE;
+            }
+
+            // ----------------------------------
+
+            throw new PaymentException(
+                PaymentExceptionConstants::ERR_PAYMENT_DATA_CODE,
+                PaymentExceptionConstants::ERR_PAYMENT_DATA_MESSAGE,
+                [
+                    'provider'  => 'Paypal REST Payments',
+                    'paymentId' => $chargeValidationVo->getPaymentId(),
+                ]
+            );
+        }
+
+        // ######################################
+
+        /**
+         * @param ChargeValidationVo $chargeValidationVo
+         *
+         * @return bool
+         */
+        protected function _isValidCharge(ChargeValidationVo $chargeValidationVo)
+        {
+            // get charge from paypal
+            $paypalChargeVo = $this->getCharge($chargeValidationVo->getPaymentId());
+
+            if ($paypalChargeVo === FALSE)
+            {
+                return FALSE;
+            }
+
+            // ------------------------------
+
+            $validState = $this->_testStringIsEqual(
+                $paypalChargeVo->getState(),
+                'APPROVED'
+            );
+
+            if ($validState === FALSE)
+            {
+                return FALSE;
+            }
+
+            // ------------------------------
+
+            $paypalChargeTransactionVoMany = $paypalChargeVo->getPaypalChargeTransactionVoMany();
+
+            if ($paypalChargeTransactionVoMany === FALSE)
+            {
+                return FALSE;
+            }
+
+            $validCurrency = $this->_testStringIsEqual(
+                $paypalChargeTransactionVoMany[0]->getCurrency(),
+                $chargeValidationVo->getCurrency()
+            );
+
+            if ($validCurrency === FALSE)
+            {
+                return FALSE;
+            }
+
+            // ------------------------------
+
+            $validAmount = $paypalChargeTransactionVoMany[0]->getTotalCents() === $chargeValidationVo->getTotalAmountCents() ? TRUE : FALSE;
+
+            if ($validAmount === FALSE)
+            {
+                return FALSE;
+            }
+
+            // ------------------------------
+
+            $paypalSaleVo = $paypalChargeTransactionVoMany[0]->getPaypalSaleVo();
+
+            if ($paypalSaleVo === FALSE)
+            {
+                return FALSE;
+            }
+
+            $validSenderTransactionStatus = $this->_testStringIsEqual(
+                $paypalSaleVo->getState(),
+                'COMPLETED'
+            );
+
+            if ($validSenderTransactionStatus === FALSE)
+            {
+                return FALSE;
+            }
+
+            // ------------------------------
+
+            return TRUE;
+        }
+
+        // ######################################
+
+        /**
+         * @param $a
+         * @param $b
+         *
+         * @return bool
+         */
+        protected function _testStringIsEqual($a, $b)
+        {
+            return strtoupper($a) === strtoupper($b) ? TRUE : FALSE;
         }
     }
