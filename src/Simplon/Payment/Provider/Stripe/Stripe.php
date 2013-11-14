@@ -185,6 +185,7 @@
             // call api
             $response = StripeApiRequests::create(
                 StripeApiConstants::PATH_CUSTOMER_CREATE,
+                [],
                 $stripeCustomerVo->getData()
             );
 
@@ -435,6 +436,7 @@
 
             $response = StripeApiRequests::create(
                 StripeApiConstants::PATH_CHARGES_CREATE,
+                [],
                 $data
             );
 

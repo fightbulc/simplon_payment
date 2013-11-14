@@ -2,8 +2,8 @@
 
     namespace Simplon\Payment\Provider\Stripe;
 
-    use Simplon\Payment\PaymentExceptionConstants;
     use Simplon\Payment\PaymentException;
+    use Simplon\Payment\PaymentExceptionConstants;
 
     class StripeApiRequests
     {
@@ -62,6 +62,8 @@
             $curl = \CURL::init(StripeApiConstants::URL_API_ROOT . $pathMethod)
                 ->setHttpAuth(CURLAUTH_BASIC)
                 ->setUserPwd(self::_getApiKey() . ":")
+                ->setProxy('127.0.0.1')
+                ->setProxyPort(8888)
                 ->setReturnTransfer(TRUE);
 
             // ----------------------------------
@@ -164,12 +166,18 @@
 
         /**
          * @param $pathMethod
+         * @param array $placeholder
          * @param array $postData
          *
          * @return bool|mixed
          */
-        public static function create($pathMethod, array $postData)
+        public static function create($pathMethod, array $placeholder, array $postData)
         {
+            if (!empty($placeholder))
+            {
+                $pathMethod = self::_parsePathPlaceholders($pathMethod, $placeholder);
+            }
+
             return self::_callApi('POST', $pathMethod, $postData);
         }
 
