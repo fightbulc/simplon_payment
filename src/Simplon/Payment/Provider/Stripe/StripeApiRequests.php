@@ -62,8 +62,6 @@
             $curl = \CURL::init(StripeApiConstants::URL_API_ROOT . $pathMethod)
                 ->setHttpAuth(CURLAUTH_BASIC)
                 ->setUserPwd(self::_getApiKey() . ":")
-                ->setProxy('127.0.0.1')
-                ->setProxyPort(8888)
                 ->setReturnTransfer(TRUE);
 
             // ----------------------------------
