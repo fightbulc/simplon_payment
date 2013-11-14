@@ -6,7 +6,7 @@
     use Simplon\Payment\Iface\ChargeVoInterface;
     use Simplon\Payment\Iface\ProviderAuthInterface;
     use Simplon\Payment\Iface\ProviderInterface;
-    use Simplon\Payment\Provider\Stripe\Vo\ChargePayerVoCustomData;
+    use Simplon\Payment\Provider\Stripe\Vo\ChargePayerCustomDataVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeAuthVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeCardVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeChargeVo;
@@ -46,15 +46,15 @@
         /**
          * @param ChargePayerVo $chargePayerVo
          *
-         * @return ChargePayerVoCustomData
+         * @return ChargePayerCustomDataVo
          */
-        protected function _getChargePayerVoCustomData(ChargePayerVo $chargePayerVo)
+        protected function _getChargePayerCustomDataVo(ChargePayerVo $chargePayerVo)
         {
-            /** @var ChargePayerVoCustomData $chargePayerVoCustomData */
+            /** @var ChargePayerCustomDataVo $chargePayerCustomDataVo */
 
-            $chargePayerVoCustomData = $chargePayerVo->getCustomDataVo();
+            $chargePayerCustomDataVo = $chargePayerVo->getCustomDataVo();
 
-            return $chargePayerVoCustomData;
+            return $chargePayerCustomDataVo;
         }
 
         // ######################################
@@ -78,16 +78,16 @@
          */
         protected function _retrieveCreateCustomer(ChargePayerVo $chargePayerVo)
         {
-            $chargePayerVoCustomData = $this->_getChargePayerVoCustomData($chargePayerVo);
+            $chargePayerCustomDataVo = $this->_getChargePayerCustomDataVo($chargePayerVo);
 
-            if (!$chargePayerVoCustomData->getCustomerId())
+            if (!$chargePayerCustomDataVo->getCustomerId())
             {
                 $stripeCustomerVo = (new StripeCustomerVo())->setEmail($chargePayerVo->getEmail());
 
                 return $this->createCustomer($stripeCustomerVo);
             }
 
-            return $this->getCustomer($chargePayerVoCustomData->getCustomerId());
+            return $this->getCustomer($chargePayerCustomDataVo->getCustomerId());
         }
 
         // ######################################
@@ -100,15 +100,15 @@
          */
         protected function _retrieveCreateCard(StripeCustomerVo $stripeCustomerVo, ChargePayerVo $chargePayerVo)
         {
-            /** @var ChargePayerVoCustomData $chargePayerVoCustomData */
-            $chargePayerVoCustomData = $chargePayerVo->getCustomDataVo();
+            /** @var ChargePayerCustomDataVo $chargePayerCustomDataVo */
+            $chargePayerCustomDataVo = $chargePayerVo->getCustomDataVo();
 
-            if (!$chargePayerVoCustomData->getCardId())
+            if (!$chargePayerCustomDataVo->getCardId())
             {
-                return $this->createCard($stripeCustomerVo, $chargePayerVoCustomData->getCardToken());
+                return $this->createCard($stripeCustomerVo, $chargePayerCustomDataVo->getCardToken());
             }
 
-            return $this->getCard($stripeCustomerVo, $chargePayerVoCustomData->getCardId());
+            return $this->getCard($stripeCustomerVo, $chargePayerCustomDataVo->getCardId());
         }
 
         // ######################################
@@ -146,14 +146,14 @@
             // ----------------------------------
 
             // add stripe payer data
-            $chargePayerVoCustomData = $this->_getChargePayerVoCustomData($chargePayerVo);
+            $chargePayerCustomDataVo = $this->_getChargePayerCustomDataVo($chargePayerVo);
 
-            $chargePayerVoCustomData
+            $chargePayerCustomDataVo
                 ->setCustomerId($stripeCustomerVo->getId())
                 ->setCardId($stripeCardVo->getId())
                 ->setCardToken(NULL);
 
-            $chargePayerVo->setCustomDataVo($chargePayerVoCustomData);
+            $chargePayerVo->setCustomDataVo($chargePayerCustomDataVo);
 
             // ----------------------------------
 

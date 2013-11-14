@@ -4,7 +4,7 @@
 
     use Simplon\Payment\Iface\ChargePayerVoCustomDataInterface;
 
-    class ChargePayerVoCustomData implements ChargePayerVoCustomDataInterface
+    class ChargePayerCustomDataVo implements ChargePayerVoCustomDataInterface
     {
         protected $_customerId;
         protected $_cardId;
@@ -15,7 +15,7 @@
         /**
          * @param mixed $providerId
          *
-         * @return ChargePayerVoCustomData
+         * @return ChargePayerCustomDataVo
          */
         public function setCustomerId($providerId)
         {
@@ -39,7 +39,7 @@
         /**
          * @param mixed $providerMeanId
          *
-         * @return ChargePayerVoCustomData
+         * @return ChargePayerCustomDataVo
          */
         public function setCardId($providerMeanId)
         {
@@ -63,7 +63,7 @@
         /**
          * @param mixed $cardToken
          *
-         * @return ChargePayerVoCustomData
+         * @return ChargePayerCustomDataVo
          */
         public function setCardToken($cardToken)
         {
