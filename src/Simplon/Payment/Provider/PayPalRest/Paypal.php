@@ -247,11 +247,11 @@
         /**
          * @param $cents
          *
-         * @return int
+         * @return float
          */
         protected function _convertCentsToPaypalAmount($cents)
         {
-            return (int)round($cents / 100);
+            return round($cents / 100, 2);
         }
 
         // ######################################
@@ -341,8 +341,8 @@
             /** @var ChargeCustomDataVo $chargeCustomDataVo */
             $chargeCustomDataVo = $chargeVo->getCustomDataVo();
 
-            /** @var ChargePayerCustomDataVo $chargePayerVoCustomData */
-            $chargePayerVoCustomData = $this->_getChargePayerVoCustomData($chargeVo->getChargePayerVo());
+            /** @var ChargePayerCustomDataVo $chargePayerCustomDataVo */
+            $chargePayerCustomDataVo = $this->_getChargePayerVoCustomData($chargeVo->getChargePayerVo());
 
             // ----------------------------------
 
@@ -352,7 +352,7 @@
                     'return_url' => $chargeCustomDataVo->getUrlSuccess(),
                     'cancel_url' => $chargeCustomDataVo->getUrlCancel(),
                 ],
-                'payer'         => $this->_createChargePayerData($chargePayerVoCustomData),
+                'payer'         => $this->_createChargePayerData($chargePayerCustomDataVo),
                 'transactions'  => $this->_createChargeTransactionsData($chargeVo),
             ];
 
