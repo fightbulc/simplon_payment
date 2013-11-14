@@ -161,6 +161,7 @@
             $header = [
                 'X-PAYPAL-SECURITY-USERID: ' . self::_getUsername(),
                 'X-PAYPAL-SECURITY-PASSWORD: ' . self::_getPassword(),
+                'X-PAYPAL-SECURITY-SIGNATURE: ' . self::_getSignature(),
                 'X-PAYPAL-REQUEST-DATA-FORMAT: NV',
                 'X-PAYPAL-RESPONSE-DATA-FORMAT: JSON',
                 'X-PAYPAL-APPLICATION-ID: ' . self::_getAppId(),
@@ -200,29 +201,11 @@
             {
                 $response = json_decode($response, TRUE);
 
-                if (isset($response['debug_id']))
+                if (isset($response['error']))
                 {
-                    $error = $response;
-
-                    if ((string)$error['name'] === 'INTERNAL_SERVICE_ERROR')
-                    {
-                        $code = PaymentExceptionConstants::ERR_API_CODE;
-                        $message = PaymentExceptionConstants::ERR_API_MESSAGE;
-                        unset($error['name']);
-                    }
-
-                    elseif ((string)$error['name'] === 'VALIDATION_ERROR')
-                    {
-                        $code = PaymentExceptionConstants::ERR_REQUEST_CODE;
-                        $message = PaymentExceptionConstants::ERR_REQUEST_MESSAGE;
-                        unset($error['name']);
-                    }
-
-                    else
-                    {
-                        $code = PaymentExceptionConstants::ERR_UNKNOWN_CODE;
-                        $message = PaymentExceptionConstants::ERR_UNKNOWN_MESSAGE;
-                    }
+                    $error = $response['error'][0];
+                    $code = PaymentExceptionConstants::ERR_API_CODE;
+                    $message = PaymentExceptionConstants::ERR_API_MESSAGE;
 
                     throw new PaymentException($code, $message, $error);
                 }

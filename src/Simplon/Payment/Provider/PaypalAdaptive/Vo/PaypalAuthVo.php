@@ -39,6 +39,7 @@
                 ->setConditionByKey('username', function ($val) { $this->setUsername($val); })
                 ->setConditionByKey('password', function ($val) { $this->setPassword($val); })
                 ->setConditionByKey('signature', function ($val) { $this->setSignature($val); })
+                ->setConditionByKey('email', function ($val) { $this->setEmail($val); })
                 ->setConditionByKey('appId', function ($val) { $this->setAppId($val); })
                 ->run();
 

@@ -174,7 +174,7 @@
 
             if (is_array($paymentInfoList) && isset($paymentInfoList['paymentInfo']))
             {
-                return (new PaypalChargePaymentInfoVo())->setData($paymentInfoList['paymentInfo']);
+                return (new PaypalChargePaymentInfoVo())->setData($paymentInfoList['paymentInfo'][0]);
             }
 
             return FALSE;

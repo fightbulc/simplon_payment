@@ -415,16 +415,25 @@
         /**
          * @param ChargeValidationVo $chargeValidationVo
          *
-         * @return bool
+         * @return ChargeResponseVo
          * @throws \Simplon\Payment\PaymentException
          */
         public function isValidCharge(ChargeValidationVo $chargeValidationVo)
         {
-            $response = $this->_isValidCharge($chargeValidationVo);
+            // get charge from paypal
+            $paypalChargeVo = $this->getCharge($chargeValidationVo->getPaymentId());
 
+            $response = $this->_isValidCharge($chargeValidationVo, $paypalChargeVo);
+
+            // all cool, pass back transaction id
             if ($response !== FALSE)
             {
-                return TRUE;
+                $transactionId = $paypalChargeVo
+                    ->getPaypalChargeTransactionVoMany()[0]
+                    ->getPaypalSaleVo()
+                    ->getId();
+
+                return (new ChargeResponseVo())->setTransactionId($transactionId);
             }
 
             // ----------------------------------
@@ -443,21 +452,12 @@
 
         /**
          * @param ChargeValidationVo $chargeValidationVo
+         * @param PaypalChargeVo $paypalChargeVo
          *
          * @return bool
          */
-        protected function _isValidCharge(ChargeValidationVo $chargeValidationVo)
+        protected function _isValidCharge(ChargeValidationVo $chargeValidationVo, PaypalChargeVo $paypalChargeVo)
         {
-            // get charge from paypal
-            $paypalChargeVo = $this->getCharge($chargeValidationVo->getPaymentId());
-
-            if ($paypalChargeVo === FALSE)
-            {
-                return FALSE;
-            }
-
-            // ------------------------------
-
             $validState = $this->_testStringIsEqual(
                 $paypalChargeVo->getState(),
                 'APPROVED'

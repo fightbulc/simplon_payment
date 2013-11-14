@@ -157,7 +157,7 @@
 
             if ($amountDetails['subtotal'])
             {
-                return (int)($amountDetails['subtotal'] * 100);
+                return (int)((float)$amountDetails['subtotal'] * 100);
             }
 
             return FALSE;
@@ -174,7 +174,7 @@
 
             if ($amountDetails['tax'])
             {
-                return (int)($amountDetails['tax'] * 100);
+                return (int)((float)$amountDetails['tax'] * 100);
             }
 
             return FALSE;
@@ -191,7 +191,7 @@
 
             if ($amountDetails['fee'])
             {
-                return (int)($amountDetails['fee'] * 100);
+                return (int)((float)$amountDetails['fee'] * 100);
             }
 
             return FALSE;
@@ -208,7 +208,7 @@
 
             if ($amount['total'])
             {
-                return (int)($amount['total'] * 100);
+                return (int)((float)$amount['total'] * 100);
             }
 
             return FALSE;

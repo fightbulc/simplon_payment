@@ -8,6 +8,7 @@
     use Simplon\Payment\Provider\PaypalAdaptive\Vo\ChargeValidationVo;
     use Simplon\Payment\Provider\PaypalAdaptive\Vo\PaypalAuthVo;
     use Simplon\Payment\Provider\PaypalAdaptive\Vo\PaypalChargeVo;
+    use Simplon\Payment\Vo\ChargeResponseVo;
 
     class Paypal
     {
@@ -83,16 +84,25 @@
         /**
          * @param ChargeValidationVo $chargeValidationVo
          *
-         * @return bool
+         * @return ChargeResponseVo
          * @throws \Simplon\Payment\PaymentException
          */
         public function isValidCharge(ChargeValidationVo $chargeValidationVo)
         {
-            $response = $this->_isValidCharge($chargeValidationVo);
+            // get charge from paypal
+            $paypalChargeVo = $this->getCharge($chargeValidationVo->getPayKey());
 
+            // validate response
+            $response = $this->_isValidCharge($chargeValidationVo, $paypalChargeVo);
+
+            // all cool, pass back transaction id
             if ($response !== FALSE)
             {
-                return TRUE;
+                $transactionId = $paypalChargeVo
+                    ->getPaypalChargePaymentInfoVo()
+                    ->getTransactionId();
+
+                return (new ChargeResponseVo())->setTransactionId($transactionId);
             }
 
             // ----------------------------------
@@ -115,21 +125,12 @@
 
         /**
          * @param ChargeValidationVo $chargeValidationVo
+         * @param PaypalChargeVo $paypalChargeVo
          *
          * @return bool
          */
-        protected function _isValidCharge(ChargeValidationVo $chargeValidationVo)
+        protected function _isValidCharge(ChargeValidationVo $chargeValidationVo, PaypalChargeVo $paypalChargeVo)
         {
-            // get charge from paypal
-            $paypalChargeVo = $this->getCharge($chargeValidationVo->getPayKey());
-
-            if ($paypalChargeVo === FALSE)
-            {
-                return FALSE;
-            }
-
-            // ------------------------------
-
             $validStatus = $this->_testStringIsEqual(
                 $paypalChargeVo->getStatus(),
                 'COMPLETED'

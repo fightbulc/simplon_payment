@@ -49,11 +49,11 @@
         // ######################################
 
         /**
-         * @return string
+         * @return int
          */
         public function getTotalAmountCents()
         {
-            return (string)$this->_totalAmountCents;
+            return (int)$this->_totalAmountCents;
         }
 
         // ######################################

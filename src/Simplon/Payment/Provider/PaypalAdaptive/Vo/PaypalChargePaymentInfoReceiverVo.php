@@ -78,7 +78,7 @@
          */
         public function getAmountCents()
         {
-            return (int)$this->_amount * 100;
+            return (int)((float)$this->_amount * 100);
         }
 
         // ######################################
