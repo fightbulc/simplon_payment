@@ -131,6 +131,11 @@
          */
         protected function _isValidCharge(ChargeValidationVo $chargeValidationVo, PaypalChargeVo $paypalChargeVo)
         {
+            $isSandbox = $this->_getAuthVo()
+                ->getSandbox();
+
+            // ------------------------------
+
             $validStatus = $this->_testStringIsEqual(
                 $paypalChargeVo->getStatus(),
                 'COMPLETED'
@@ -143,9 +148,12 @@
 
             // ------------------------------
 
+            // sandbox only accepts USD
+            $currency = $isSandbox === TRUE ? 'USD' : $chargeValidationVo->getCurrency();
+
             $validCurrency = $this->_testStringIsEqual(
                 $paypalChargeVo->getCurrencyCode(),
-                $chargeValidationVo->getCurrency()
+                $currency
             );
 
             if ($validCurrency === FALSE)
