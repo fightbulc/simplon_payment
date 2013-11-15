@@ -13,6 +13,7 @@
     use Simplon\Payment\Provider\PaypalRest\Vo\ChargeValidationVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\PaypalAuthVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\PaypalChargeVo;
+    use Simplon\Payment\Provider\PaypalRest\Vo\PaypalSaleVo;
     use Simplon\Payment\Vo\ChargePayerVo;
     use Simplon\Payment\Vo\ChargeResponseVo;
     use Simplon\Payment\Vo\ChargeVo;
@@ -408,6 +409,25 @@
             );
 
             return (new PaypalChargeVo())->setData($response);
+        }
+
+        // ######################################
+
+        /**
+         * @param $saleId
+         *
+         * @return PaypalChargeVo
+         */
+        public function getSale($saleId)
+        {
+            $response = PaypalApiRequests::retrieve(
+                PaypalApiConstants::PATH_SALES_RETRIEVE,
+                [
+                    'saleId' => $saleId,
+                ]
+            );
+
+            return (new PaypalSaleVo())->setData($response);
         }
 
         // ######################################

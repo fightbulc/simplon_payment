@@ -12,4 +12,9 @@
         CONST PATH_PAYMENTS_CREATE = '/payments/payment';
         CONST PATH_PAYMENTS_RETRIEVE = '/payments/payment/{{paymentId}}';
         CONST PATH_PAYMENTS_EXECUTE = '/payments/payment/{{paymentId}}/execute';
+
+        CONST PATH_SALES_RETRIEVE = '/payments/sale/{{saleId}}';
+        CONST PATH_SALES_REFUND = '/payments/sale/{{saleId}}/refund';
+
+        CONST PATH_REFUNDS_RETRIEVE = '/payments/refund/{{refundId}}';
     }
