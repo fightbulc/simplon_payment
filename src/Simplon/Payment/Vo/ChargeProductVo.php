@@ -327,7 +327,7 @@
         {
             $priceCents = $this->getSurchargeCents();
 
-            if ($this->getPriceIncludesVat() !== TRUE)
+            if ($this->getSurchargeIncludesVat() !== TRUE)
             {
                 $priceCents += $this->getSurchargeVatCents();
             }
