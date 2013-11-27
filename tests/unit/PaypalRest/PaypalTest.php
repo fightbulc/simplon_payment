@@ -50,10 +50,12 @@
          */
         public function getInstance()
         {
+            $env = 'test';
+
             $paypalAuthVo = (new PaypalAuthVo())
-                ->setClientId($this->_config['paypal']['rest']['test']['clientId'])
-                ->setSecret($this->_config['paypal']['rest']['test']['secret'])
-                ->setSandbox(TRUE);
+                ->setClientId($this->_config['paypal']['rest'][$env]['clientId'])
+                ->setSecret($this->_config['paypal']['rest'][$env]['secret'])
+                ->setSandbox($env !== 'live' ? TRUE : FALSE);
 
             return new Paypal($paypalAuthVo);
         }
