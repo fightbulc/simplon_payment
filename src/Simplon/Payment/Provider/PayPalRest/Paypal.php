@@ -248,11 +248,11 @@
         /**
          * @param $cents
          *
-         * @return float
+         * @return string
          */
         protected function _convertCentsToPaypalAmount($cents)
         {
-            return round($cents / 100, 2);
+            return number_format($cents / 100, 2);
         }
 
         // ######################################
@@ -306,7 +306,7 @@
                 $itemsList[] = [
                     'quantity' => 1,
                     'name'     => $chargeProductVo->getName(),
-                    'price'    => $this->_convertCentsToPaypalAmount($chargeProductVo->getTotalAmountCents()),
+                    'price'    => $this->_convertCentsToPaypalAmount($chargeProductVo->getSubTotalAmountCents()),
                     'currency' => $currency,
                     'sku'      => $chargeProductVo->getReferenceId(),
                 ];
