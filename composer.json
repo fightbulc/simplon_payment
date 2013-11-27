@@ -16,10 +16,22 @@
     ],
     "minimum-stability": "dev",
 
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/fightbulc/Codeception"
+        }
+    ],
+
     "require": {
         "php": ">=5.4",
         "fightbulc/php_curl": "1.0.*",
         "simplon/helper": "0.6.*"
+    },
+
+    "require-dev": {
+        "codeception/codeception": "dev-jsonrpc",
+        "codeception/aspect-mock": "0.4.*"
     },
 
     "autoload": {

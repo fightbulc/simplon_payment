@@ -1,4 +1,8 @@
-vendor
-test
-composer.lock
 .idea
+composer.lock
+/vendor
+/tests/_data/config.php
+/tests/_cache
+/tests/_log
+/test
+

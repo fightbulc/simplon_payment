@@ -1,0 +1,45 @@
+<?php
+
+    $config = [
+        'stripe' => [
+            'test' => [
+                'privateKey' => '',
+                'publicKey'  => '',
+            ],
+            'live' => [
+                'privateKey' => '',
+                'publicKey'  => '',
+            ],
+        ],
+
+        // --------------------------------------
+
+        'paypal' => [
+            'rest'    => [
+                'test' => [
+                    'clientId' => '',
+                    'secret'   => '',
+                ],
+                'live' => [
+                    'clientId' => '',
+                    'secret'   => '',
+                ],
+            ],
+            'classic' => [
+                'test' => [
+                    'username'  => ',
+                    'password'  => '',
+                    'signature' => '',
+                    'email'     => '', // for mobile
+                    'appId'     => '', // for mobile
+                ],
+                'live' => [
+                    'username'  => '',
+                    'password'  => '',
+                    'signature' => '',
+                    'email'     => '', // for mobile
+                    'appId'     => '', // for mobile
+                ],
+            ]
+        ],
+    ];
