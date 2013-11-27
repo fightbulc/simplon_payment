@@ -88,12 +88,12 @@
             $chargeProductVoMany[] = (new ChargeProductVo())
                 ->setName('Product#1')
                 ->setReferenceId('123456789')
-                ->setPriceCents(100)
+                ->setPriceCents(700)
                 ->setPriceVat(19)
                 ->setPriceIncludesVat(TRUE)
-                ->setSurchargeCents(50)
+                ->setSurchargeCents(100)
                 ->setSurchargeVat(19)
-                ->setSurchargeIncludesVat(TRUE);
+                ->setSurchargeIncludesVat(FALSE);
 
             $chargeCustomDataVo = (new ChargeCustomDataVo())
                 ->setUrlSuccess('http://beatguide.me/s/')
@@ -129,7 +129,7 @@
             $this->assertArrayHasKey('amount', $response[0]);
             $this->assertArrayHasKey('total', $response[0]['amount']);
             $this->assertInternalType('string', $response[0]['amount']['total']);
-            $this->assertEquals('1.50', $response[0]['amount']['total']);
+            $this->assertEquals('8.19', $response[0]['amount']['total']);
 
             $this->assertArrayHasKey('currency', $response[0]['amount']);
             $this->assertEquals('USD', $response[0]['amount']['currency']);
@@ -137,15 +137,15 @@
             $this->assertArrayHasKey('details', $response[0]['amount']);
             $this->assertArrayHasKey('subtotal', $response[0]['amount']['details']);
             $this->assertInternalType('string', $response[0]['amount']['details']['subtotal']);
-            $this->assertEquals('1.26', $response[0]['amount']['details']['subtotal']);
+            $this->assertEquals('6.88', $response[0]['amount']['details']['subtotal']);
             $this->assertInternalType('string', $response[0]['amount']['details']['tax']);
-            $this->assertEquals('0.24', $response[0]['amount']['details']['tax']);
+            $this->assertEquals('1.31', $response[0]['amount']['details']['tax']);
 
             $this->assertArrayHasKey('description', $response[0]);
 
             $this->assertArrayHasKey('item_list', $response[0]);
             $this->assertInternalType('string', $response[0]['item_list']['items'][0]['price']);
-            $this->assertEquals('1.26', $response[0]['item_list']['items'][0]['price']);
+            $this->assertEquals('6.88', $response[0]['item_list']['items'][0]['price']);
             $this->assertEquals('USD', $response[0]['item_list']['items'][0]['currency']);
         }
 
