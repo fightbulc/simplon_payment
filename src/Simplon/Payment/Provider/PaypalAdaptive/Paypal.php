@@ -96,7 +96,7 @@
             $response = $this->_isValidCharge($chargeValidationVo, $paypalChargeVo);
 
             // all cool, pass back transaction id
-            if ($response !== FALSE)
+            if ($response === TRUE)
             {
                 $transactionId = $paypalChargeVo
                     ->getPaypalChargePaymentInfoVo()
@@ -117,6 +117,7 @@
                     'provider' => 'Paypal Adaptive Payments',
                     'payKey'   => $chargeValidationVo->getPayKey(),
                     'appId'    => $appId,
+                    'error'    => $response,
                 ]
             );
         }
@@ -143,7 +144,7 @@
 
             if ($validStatus === FALSE)
             {
-                return FALSE;
+                return 'payment status isnt "completed"';
             }
 
             // ------------------------------
@@ -158,7 +159,7 @@
 
             if ($validCurrency === FALSE)
             {
-                return FALSE;
+                return 'currency doesnt match up';
             }
 
             // ------------------------------
@@ -170,7 +171,7 @@
 
             if ($validPaymentInfo === FALSE)
             {
-                return FALSE;
+                return 'payment info object is missing';
             }
 
             // ------------------------------
@@ -190,7 +191,7 @@
 
             if ($validReceiver === FALSE)
             {
-                return FALSE;
+                return 'receiver doesnt match. Given: ' . $paypalChargePaymentInfoReceiverVo->getEmail() . ' --> Should be: ' . $accountEmail;
             }
 
             // ------------------------------
@@ -199,7 +200,7 @@
 
             if ($validAmount === FALSE)
             {
-                return FALSE;
+                return 'amount doesnt match. Given: ' . $paypalChargePaymentInfoReceiverVo->getAmountCents() . ' --> Should be: ' . $chargeValidationVo->getTotalAmountCents();
             }
 
             // ------------------------------
@@ -211,7 +212,7 @@
 
             if ($validSenderTransactionStatus === FALSE)
             {
-                return FALSE;
+                return 'transaction status is not "completed"';
             }
 
             // ------------------------------
