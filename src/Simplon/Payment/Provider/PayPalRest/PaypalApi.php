@@ -305,7 +305,11 @@
             }
 
             $expectedSaleState = 'COMPLETED';
-            $isStateCompleted = PaymentHelper::isStringEqual($expectedAuthState, $paypalSaleVo->getState());
+
+            $isStateCompleted = PaymentHelper::isStringEqual(
+                $expectedSaleState,
+                $paypalSaleVo->getState()
+            );
 
             if ($isStateCompleted === FALSE)
             {
