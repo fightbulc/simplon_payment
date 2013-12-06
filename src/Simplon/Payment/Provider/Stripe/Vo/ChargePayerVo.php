@@ -2,9 +2,7 @@
 
     namespace Simplon\Payment\Provider\Stripe\Vo;
 
-    use Simplon\Payment\Iface\ChargePayerVoCustomDataInterface;
-
-    class ChargePayerCustomDataVo implements ChargePayerVoCustomDataInterface
+    class ChargePayerVo extends \Simplon\Payment\Vo\ChargePayerVo
     {
         protected $_customerId;
         protected $_cardId;
@@ -15,7 +13,7 @@
         /**
          * @param mixed $providerId
          *
-         * @return ChargePayerCustomDataVo
+         * @return ChargePayerVo
          */
         public function setCustomerId($providerId)
         {
@@ -39,7 +37,7 @@
         /**
          * @param mixed $providerMeanId
          *
-         * @return ChargePayerCustomDataVo
+         * @return ChargePayerVo
          */
         public function setCardId($providerMeanId)
         {
@@ -63,7 +61,7 @@
         /**
          * @param mixed $cardToken
          *
-         * @return ChargePayerCustomDataVo
+         * @return ChargePayerVo
          */
         public function setCardToken($cardToken)
         {

@@ -2,9 +2,7 @@
 
     namespace Simplon\Payment\Provider\PaypalRest\Vo;
 
-    use Simplon\Payment\Iface\ChargeCustomDataVoInterface;
-
-    class ChargeCustomDataVo implements ChargeCustomDataVoInterface
+    class ChargeVo extends \Simplon\Payment\Vo\ChargeVo
     {
         protected $_urlSuccess;
         protected $_urlCancel;
@@ -18,7 +16,7 @@
         /**
          * @param mixed $urlApproval
          *
-         * @return ChargeCustomDataVo
+         * @return ChargeVo
          */
         public function setUrlApproval($urlApproval)
         {
@@ -42,7 +40,7 @@
         /**
          * @param mixed $urlExecute
          *
-         * @return ChargeCustomDataVo
+         * @return ChargeVo
          */
         public function setUrlExecute($urlExecute)
         {
@@ -66,7 +64,7 @@
         /**
          * @param mixed $urlSelf
          *
-         * @return ChargeCustomDataVo
+         * @return ChargeVo
          */
         public function setUrlSelf($urlSelf)
         {
@@ -90,7 +88,7 @@
         /**
          * @param mixed $paymentId
          *
-         * @return ChargeCustomDataVo
+         * @return ChargeVo
          */
         public function setPaymentId($paymentId)
         {
@@ -114,7 +112,7 @@
         /**
          * @param mixed $urlCancel
          *
-         * @return ChargeCustomDataVo
+         * @return ChargeVo
          */
         public function setUrlCancel($urlCancel)
         {
@@ -138,7 +136,7 @@
         /**
          * @param mixed $urlSuccess
          *
-         * @return ChargeCustomDataVo
+         * @return ChargeVo
          */
         public function setUrlSuccess($urlSuccess)
         {

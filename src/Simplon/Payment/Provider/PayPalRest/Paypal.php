@@ -2,54 +2,30 @@
 
     namespace Simplon\Payment\Provider\PaypalRest;
 
-    use Simplon\Payment\ChargeStateConstants;
-    use Simplon\Payment\Iface\ChargeVoInterface;
-    use Simplon\Payment\Iface\ProviderAuthInterface;
-    use Simplon\Payment\Iface\ProviderInterface;
     use Simplon\Payment\PaymentException;
     use Simplon\Payment\PaymentExceptionConstants;
-    use Simplon\Payment\Provider\PaypalRest\Vo\ChargeCustomDataVo;
-    use Simplon\Payment\Provider\PaypalRest\Vo\ChargePayerCustomDataVo;
+    use Simplon\Payment\Provider\PaypalRest\Vo\ChargeExecuteVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\ChargeValidationVo;
+    use Simplon\Payment\Provider\PaypalRest\Vo\ChargeVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\PaypalAuthVo;
-    use Simplon\Payment\Provider\PaypalRest\Vo\PaypalChargeVo;
-    use Simplon\Payment\Provider\PaypalRest\Vo\PaypalSaleVo;
-    use Simplon\Payment\Vo\ChargePayerVo;
     use Simplon\Payment\Vo\ChargeResponseVo;
-    use Simplon\Payment\Vo\ChargeVo;
 
-    class Paypal implements ProviderInterface
+    class Paypal
     {
         /** @var  PaypalAuthVo */
         protected $_authVo;
 
-        // ######################################
-
-        /**
-         * @param ProviderAuthInterface $authVo
-         */
-        public function __construct(ProviderAuthInterface $authVo)
-        {
-            /** @var $authVo PaypalAuthVo */
-            $this->_setAuthVo($authVo);
-
-            PaypalApiRequests::setClientId($authVo->getClientId());
-            PaypalApiRequests::setSecret($authVo->getSecret());
-            PaypalApiRequests::setSandbox($authVo->getSandbox());
-        }
+        /** @var  PaypalApi */
+        protected $_paypalApiInstance;
 
         // ######################################
 
         /**
          * @param PaypalAuthVo $authVo
-         *
-         * @return Paypal
          */
-        protected function _setAuthVo(PaypalAuthVo $authVo)
+        public function __construct(PaypalAuthVo $authVo)
         {
             $this->_authVo = $authVo;
-
-            return $this;
         }
 
         // ######################################
@@ -65,97 +41,42 @@
         // ######################################
 
         /**
-         * @return bool
+         * @return PaypalApi
          */
-        protected function _isSandbox()
+        protected function _getPaypalApiInstance()
         {
-            return $this->_getAuthVo()
-                ->getSandbox();
-        }
-
-        // ######################################
-
-        /**
-         * @param ChargeVo $chargeVo
-         *
-         * @return \Simplon\Payment\Vo\ChargePayerVo
-         */
-        protected function _getChargePayerVo(ChargeVo $chargeVo)
-        {
-            return $chargeVo->getChargePayerVo();
-        }
-
-        // ######################################
-
-        /**
-         * @param ChargePayerVo $chargePayerVo
-         *
-         * @return ChargePayerCustomDataVo
-         */
-        protected function _getChargePayerVoCustomData(ChargePayerVo $chargePayerVo)
-        {
-            /** @var ChargePayerCustomDataVo $chargePayerVoCustomData */
-
-            $chargePayerVoCustomData = $chargePayerVo->getCustomDataVo();
-
-            return $chargePayerVoCustomData;
-        }
-
-        // ######################################
-
-        /**
-         * @param ChargeVo $chargeVo
-         *
-         * @return \Simplon\Payment\Vo\ChargeProductVo[]
-         */
-        protected function _getChargeProductVoMany(ChargeVo $chargeVo)
-        {
-            return $chargeVo->getChargeProductVoMany();
-        }
-
-        // ######################################
-
-        /**
-         * @param ChargeVoInterface $chargeVo
-         *
-         * @return bool|\Simplon\Payment\Iface\ChargeResponseVoInterface|ChargeResponseVo
-         */
-        public function processCharge(ChargeVoInterface $chargeVo)
-        {
-            /** @var ChargeCustomDataVo $chargeVoCustomData */
-            $chargeVoCustomData = $chargeVo->getCustomDataVo();
-
-            // execute payment
-            if ($chargeVoCustomData->getPaymentId())
+            if (!$this->_paypalApiInstance)
             {
-                return $this->_processExecuteCharge($chargeVo);
+                $this->_paypalApiInstance = new PaypalApi($this->_getAuthVo());
             }
 
-            // ----------------------------------
-
-            // create payment
-            return $this->_processCreateCharge($chargeVo, $chargeVoCustomData);
+            return $this->_paypalApiInstance;
         }
 
         // ######################################
 
         /**
          * @param ChargeVo $chargeVo
-         * @param ChargeCustomDataVo $chargeVoCustomData
          *
          * @return ChargeResponseVo
          */
-        protected function _processCreateCharge(ChargeVo $chargeVo, ChargeCustomDataVo $chargeVoCustomData)
+        public function authoriseCharge(ChargeVo $chargeVo)
         {
-            $paypalChargeVo = $this->createCharge($chargeVo);
+            $paypalChargeVo = $this->_getPaypalApiInstance()
+                ->authoriseCharge($chargeVo);
 
             // ----------------------------------
 
             $paypalChargeLinksVo = $paypalChargeVo->getPaypalChargeLinksVo();
 
-            $chargeVoCustomData
+            $chargeVo
                 ->setUrlApproval($paypalChargeLinksVo->getUrlApproval())
                 ->setPaymentId($paypalChargeVo->getId());
+
+            $simplonChargeStatus = $this->_getPaypalApiInstance()
+                ->convertPaypalStateToSimplonState($paypalChargeVo->getState());
+
+            // ----------------------------------
 
             return (new ChargeResponseVo())
                 ->setReferenceId($chargeVo->getReferenceId())
@@ -163,20 +84,20 @@
                 ->setCurrency($chargeVo->getCurrency())
                 ->setChargePayerVo($chargeVo->getChargePayerVo())
                 ->setChargeProductVoMany($chargeVo->getChargeProductVoMany())
-                ->setStatus($this->_convertPaypalStateToSimplonState($paypalChargeVo->getState()))
-                ->setCustomDataVo($chargeVoCustomData);
+                ->setStatus($simplonChargeStatus);
         }
 
         // ######################################
 
         /**
-         * @param ChargeVo $chargeVo
+         * @param ChargeExecuteVo $chargeExecuteVo
          *
          * @return bool|ChargeResponseVo
          */
-        protected function _processExecuteCharge(ChargeVo $chargeVo)
+        public function executeCharge(ChargeExecuteVo $chargeExecuteVo)
         {
-            $paypalChargeVo = $this->executeCharge($chargeVo);
+            $paypalChargeVo = $this->_getPaypalApiInstance()
+                ->executeCharge($chargeExecuteVo);
 
             // ----------------------------------
 
@@ -189,245 +110,15 @@
 
             if ($paypalSaleVo !== FALSE)
             {
+                $simplonState = $this->_getPaypalApiInstance()
+                    ->convertPaypalStateToSimplonState($paypalSaleVo->getState());
+
                 return (new ChargeResponseVo())
                     ->setTransactionId($paypalSaleVo->getId())
-                    ->setStatus($this->_convertPaypalStateToSimplonState($paypalSaleVo->getState()));
+                    ->setStatus($simplonState);
             }
 
             return FALSE;
-        }
-
-        // ######################################
-
-        /**
-         * @param $paypalState
-         *
-         * @return string
-         */
-        protected function _convertPaypalStateToSimplonState($paypalState)
-        {
-            switch ($paypalState)
-            {
-                case 'created':
-                    $state = ChargeStateConstants::CREATED;
-                    break;
-
-                case 'approved':
-                    $state = ChargeStateConstants::APPROVED;
-                    break;
-
-                case 'pending':
-                    $state = ChargeStateConstants::PENDING;
-                    break;
-
-                case 'completed':
-                    $state = ChargeStateConstants::COMPLETED;
-                    break;
-
-                case 'failed':
-                    $state = ChargeStateConstants::FAILED;
-                    break;
-
-                case 'canceled':
-                    $state = ChargeStateConstants::INVALID;
-                    break;
-
-                case 'expired':
-                    $state = ChargeStateConstants::INVALID;
-                    break;
-
-                default:
-                    $state = ChargeStateConstants::UNKNOWN;
-            }
-
-            return $state;
-        }
-
-        // ######################################
-
-        /**
-         * @param $cents
-         *
-         * @return string
-         */
-        protected function _convertCentsToPaypalAmount($cents)
-        {
-            return number_format($cents / 100, 2);
-        }
-
-        // ######################################
-
-        /**
-         * @param ChargePayerCustomDataVo $chargePayerVoCustomData
-         *
-         * @return array
-         */
-        protected function _createChargePayerData(ChargePayerCustomDataVo $chargePayerVoCustomData)
-        {
-            $payerData = [
-                'payment_method' => $chargePayerVoCustomData->getPayMethod(),
-            ];
-
-            if ($chargePayerVoCustomData->getPayMethod() === 'credit_card')
-            {
-                // handle credit card data
-            }
-
-            return $payerData;
-        }
-
-        // ######################################
-
-        /**
-         * @param ChargeVo $chargeVo
-         *
-         * @return array
-         */
-        protected function _createChargeTransactionsData(ChargeVo $chargeVo)
-        {
-            $transactions = [];
-            $itemsList = [];
-
-            // ----------------------------------
-
-            $currency = $chargeVo->getCurrency();
-
-            if ($this->_isSandbox())
-            {
-                $currency = 'USD';
-            }
-
-            // ----------------------------------
-
-            $chargeProductVoMany = $chargeVo->getChargeProductVoMany();
-
-            foreach ($chargeProductVoMany as $chargeProductVo)
-            {
-                $itemsList[] = [
-                    'quantity' => 1,
-                    'name'     => $chargeProductVo->getName(),
-                    'price'    => $this->_convertCentsToPaypalAmount($chargeProductVo->getSubTotalAmountCents()),
-                    'currency' => $currency,
-                    'sku'      => $chargeProductVo->getReferenceId(),
-                ];
-            }
-
-            $transactions[] = [
-                'amount'      => [
-                    'total'    => $this->_convertCentsToPaypalAmount($chargeVo->getTotalAmountCents()),
-                    'currency' => $currency,
-                    'details'  => [
-                        'subtotal' => $this->_convertCentsToPaypalAmount($chargeVo->getSubTotalAmountCents()),
-                        'tax'      => $this->_convertCentsToPaypalAmount($chargeVo->getTotalVatAmountCents()),
-                    ]
-                ],
-                'description' => $chargeVo->getDescription(),
-                'item_list'   => [
-                    'items' => $itemsList,
-                ],
-            ];
-
-            return $transactions;
-        }
-
-        // ######################################
-
-        /**
-         * @param ChargeVo $chargeVo
-         *
-         * @return bool|PaypalChargeVo
-         */
-        public function createCharge(ChargeVo $chargeVo)
-        {
-            /** @var ChargeCustomDataVo $chargeCustomDataVo */
-            $chargeCustomDataVo = $chargeVo->getCustomDataVo();
-
-            /** @var ChargePayerCustomDataVo $chargePayerCustomDataVo */
-            $chargePayerCustomDataVo = $this->_getChargePayerVoCustomData($chargeVo->getChargePayerVo());
-
-            // ----------------------------------
-
-            $data = [
-                'intent'        => 'sale',
-                'redirect_urls' => [
-                    'return_url' => $chargeCustomDataVo->getUrlSuccess(),
-                    'cancel_url' => $chargeCustomDataVo->getUrlCancel(),
-                ],
-                'payer'         => $this->_createChargePayerData($chargePayerCustomDataVo),
-                'transactions'  => $this->_createChargeTransactionsData($chargeVo),
-            ];
-
-            $response = PaypalApiRequests::create(PaypalApiConstants::PATH_PAYMENTS_CREATE, $data);
-
-            return (new PaypalChargeVo())->setData($response);
-        }
-
-        // ######################################
-
-        /**
-         * @param ChargeVo $chargeVo
-         *
-         * @return bool|PaypalChargeVo
-         */
-        public function executeCharge(ChargeVo $chargeVo)
-        {
-            /** @var ChargeCustomDataVo $chargeCustomDataVo */
-            $chargeCustomDataVo = $chargeVo->getCustomDataVo();
-
-            /** @var ChargePayerCustomDataVo $chargePayerVoCustomData */
-            $chargePayerVoCustomData = $this->_getChargePayerVoCustomData($chargeVo->getChargePayerVo());
-
-            // ----------------------------------
-
-            $response = PaypalApiRequests::update(
-                PaypalApiConstants::PATH_PAYMENTS_EXECUTE,
-                [
-                    'paymentId' => $chargeCustomDataVo->getPaymentId(),
-                ],
-                [
-                    'payer_id' => $chargePayerVoCustomData->getPayerId(),
-                ]
-            );
-
-            return (new PaypalChargeVo())->setData($response);
-        }
-
-        // ######################################
-
-        /**
-         * @param $paymentId
-         *
-         * @return PaypalChargeVo
-         */
-        public function getCharge($paymentId)
-        {
-            $response = PaypalApiRequests::retrieve(
-                PaypalApiConstants::PATH_PAYMENTS_RETRIEVE,
-                [
-                    'paymentId' => $paymentId,
-                ]
-            );
-
-            return (new PaypalChargeVo())->setData($response);
-        }
-
-        // ######################################
-
-        /**
-         * @param $saleId
-         *
-         * @return PaypalChargeVo
-         */
-        public function getSale($saleId)
-        {
-            $response = PaypalApiRequests::retrieve(
-                PaypalApiConstants::PATH_SALES_RETRIEVE,
-                [
-                    'saleId' => $saleId,
-                ]
-            );
-
-            return (new PaypalSaleVo())->setData($response);
         }
 
         // ######################################
@@ -441,12 +132,15 @@
         public function isValidCharge(ChargeValidationVo $chargeValidationVo)
         {
             // get charge from paypal
-            $paypalChargeVo = $this->getCharge($chargeValidationVo->getPaymentId());
+            $paypalChargeVo = $this->_getPaypalApiInstance()
+                ->getCharge($chargeValidationVo->getPaymentId());
 
-            $response = $this->_isValidCharge($chargeValidationVo, $paypalChargeVo);
+            $validationResponse = $this->_getPaypalApiInstance()
+                ->isValidCharge($chargeValidationVo, $paypalChargeVo);
 
-            // all cool, pass back transaction id
-            if ($response !== FALSE)
+            // ----------------------------------
+
+            if ($validationResponse === TRUE)
             {
                 $transactionId = $paypalChargeVo
                     ->getPaypalChargeTransactionVoMany()[0]
@@ -464,100 +158,8 @@
                 [
                     'provider'  => 'Paypal REST Payments',
                     'paymentId' => $chargeValidationVo->getPaymentId(),
+                    'error'     => $validationResponse,
                 ]
             );
-        }
-
-        // ######################################
-
-        /**
-         * @param ChargeValidationVo $chargeValidationVo
-         * @param PaypalChargeVo $paypalChargeVo
-         *
-         * @return bool
-         */
-        protected function _isValidCharge(ChargeValidationVo $chargeValidationVo, PaypalChargeVo $paypalChargeVo)
-        {
-            $isSandbox = $this->_getAuthVo()
-                ->getSandbox();
-
-            // ------------------------------
-
-            $validState = $this->_testStringIsEqual(
-                $paypalChargeVo->getState(),
-                'APPROVED'
-            );
-
-            if ($validState === FALSE)
-            {
-                return FALSE;
-            }
-
-            // ------------------------------
-
-            $paypalChargeTransactionVoMany = $paypalChargeVo->getPaypalChargeTransactionVoMany();
-
-            if ($paypalChargeTransactionVoMany === FALSE)
-            {
-                return FALSE;
-            }
-
-            // sandbox only accepts USD
-            $currency = $isSandbox === TRUE ? 'USD' : $chargeValidationVo->getCurrency();
-
-            $validCurrency = $this->_testStringIsEqual(
-                $paypalChargeTransactionVoMany[0]->getCurrency(),
-                $currency
-            );
-
-            if ($validCurrency === FALSE)
-            {
-                return FALSE;
-            }
-
-            // ------------------------------
-
-            $validAmount = $paypalChargeTransactionVoMany[0]->getTotalCents() === $chargeValidationVo->getTotalAmountCents() ? TRUE : FALSE;
-
-            if ($validAmount === FALSE)
-            {
-                return FALSE;
-            }
-
-            // ------------------------------
-
-            $paypalSaleVo = $paypalChargeTransactionVoMany[0]->getPaypalSaleVo();
-
-            if ($paypalSaleVo === FALSE)
-            {
-                return FALSE;
-            }
-
-            $validSenderTransactionStatus = $this->_testStringIsEqual(
-                $paypalSaleVo->getState(),
-                'COMPLETED'
-            );
-
-            if ($validSenderTransactionStatus === FALSE)
-            {
-                return FALSE;
-            }
-
-            // ------------------------------
-
-            return TRUE;
-        }
-
-        // ######################################
-
-        /**
-         * @param $a
-         * @param $b
-         *
-         * @return bool
-         */
-        protected function _testStringIsEqual($a, $b)
-        {
-            return strtoupper($a) === strtoupper($b) ? TRUE : FALSE;
         }
     }

@@ -4,7 +4,6 @@
 
     use Simplon\Payment\Iface\ChargePayerVoInterface;
     use Simplon\Payment\Iface\ChargeProductVoInterface;
-    use Simplon\Payment\Iface\ChargeCustomDataVoInterface;
     use Simplon\Payment\Iface\ChargeVoInterface;
 
     class ChargeVo implements ChargeVoInterface
@@ -18,9 +17,6 @@
 
         /** @var  ChargeProductVo[] */
         protected $_chargeProductVoMany;
-
-        /** @var  ChargeCustomDataVoInterface */
-        protected $_customDataVo;
 
         // ######################################
 
@@ -208,29 +204,5 @@
         public function getReferenceId()
         {
             return (string)$this->_referenceId;
-        }
-
-        // ######################################
-
-        /**
-         * @param ChargeCustomDataVoInterface $customDataVo
-         *
-         * @return static
-         */
-        public function setCustomDataVo(ChargeCustomDataVoInterface $customDataVo)
-        {
-            $this->_customDataVo = $customDataVo;
-
-            return $this;
-        }
-
-        // ######################################
-
-        /**
-         * @return ChargeCustomDataVoInterface
-         */
-        public function getCustomDataVo()
-        {
-            return $this->_customDataVo;
         }
     }

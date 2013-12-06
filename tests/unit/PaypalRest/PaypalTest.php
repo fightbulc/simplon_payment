@@ -4,8 +4,8 @@
 
     use Codeception\TestCase\Test;
     use Simplon\Payment\Provider\PaypalRest\Paypal;
-    use Simplon\Payment\Provider\PaypalRest\Vo\ChargeCustomDataVo;
-    use Simplon\Payment\Provider\PaypalRest\Vo\ChargePayerCustomDataVo;
+    use Simplon\Payment\Provider\PaypalRest\Vo\ChargeVo;
+    use Simplon\Payment\Provider\PaypalRest\Vo\ChargePayerVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\PaypalAuthVo;
     use Simplon\Payment\Vo\ChargePayerVo;
     use Simplon\Payment\Vo\ChargeProductVo;
@@ -97,11 +97,11 @@
                 ->setSurchargeVat(19)
                 ->setSurchargeIncludesVat(FALSE);
 
-            $chargeCustomDataVo = (new ChargeCustomDataVo())
+            $chargeCustomDataVo = (new ChargeVo())
                 ->setUrlSuccess('http://beatguide.me/s/')
                 ->setUrlCancel('http://beatguide.me/c/');
 
-            $payerCustomDataVo = (new ChargePayerCustomDataVo())
+            $payerCustomDataVo = (new ChargePayerVo())
                 ->setPayMethod('paypal');
 
             $chargePayerVo = (new ChargePayerVo())
