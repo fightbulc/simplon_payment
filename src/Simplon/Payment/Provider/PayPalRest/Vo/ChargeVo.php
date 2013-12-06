@@ -2,8 +2,13 @@
 
     namespace Simplon\Payment\Provider\PaypalRest\Vo;
 
-    class ChargeVo extends \Simplon\Payment\Vo\ChargeVo
+    use Simplon\Payment\Iface\ChargeVoInterface;
+    use Simplon\Payment\Traits\ChargeVoTrait;
+
+    class ChargeVo implements ChargeVoInterface
     {
+        use ChargeVoTrait;
+
         protected $_urlSuccess;
         protected $_urlCancel;
         protected $_urlApproval;
@@ -153,5 +158,25 @@
         public function getUrlSuccess()
         {
             return (string)$this->_urlSuccess;
+        }
+
+        // ######################################
+
+        /**
+         * @return ChargePayerVo
+         */
+        public function getChargePayerVo()
+        {
+            return $this->_chargePayerVo;
+        }
+
+        // ######################################
+
+        /**
+         * @return ChargeProductVo[]
+         */
+        public function getChargeProductVoMany()
+        {
+            return $this->_chargeProductVoMany;
         }
     }

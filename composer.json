@@ -1,9 +1,8 @@
 {
-
     "name": "simplon/payment",
     "description": "Product based payment proxy library. Paypal RESTful, Paypal Mobile, Stripe and extendable.",
     "homepage": "https://github.com/fightbulc/simplon_payment",
-    "version": "2.0.0",
+    "version": "1.0.0",
     "type": "library",
     "keywords": [
         "payment",

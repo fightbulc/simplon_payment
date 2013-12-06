@@ -1,21 +1,16 @@
 <?php
 
-    namespace Simplon\Payment\Vo;
+    namespace Simplon\Payment\Traits;
 
     use Simplon\Payment\Iface\ChargePayerVoInterface;
     use Simplon\Payment\Iface\ChargeProductVoInterface;
-    use Simplon\Payment\Iface\ChargeVoInterface;
 
-    class ChargeVo implements ChargeVoInterface
+    trait ChargeVoTrait
     {
         protected $_referenceId;
         protected $_description;
         protected $_currency;
-
-        /** @var  ChargePayerVo */
         protected $_chargePayerVo;
-
-        /** @var  ChargeProductVo[] */
         protected $_chargeProductVoMany;
 
         // ######################################
@@ -35,16 +30,6 @@
         // ######################################
 
         /**
-         * @return ChargePayerVo
-         */
-        public function getChargePayerVo()
-        {
-            return $this->_chargePayerVo;
-        }
-
-        // ######################################
-
-        /**
          * @param ChargeProductVoInterface $chargeProductVo
          *
          * @return static
@@ -59,7 +44,7 @@
         // ######################################
 
         /**
-         * @param mixed $chargeProductVoMany
+         * @param array $chargeProductVoMany
          *
          * @return static
          */
@@ -68,16 +53,6 @@
             $this->_chargeProductVoMany = $chargeProductVoMany;
 
             return $this;
-        }
-
-        // ######################################
-
-        /**
-         * @return ChargeProductVo[]
-         */
-        public function getChargeProductVoMany()
-        {
-            return $this->_chargeProductVoMany;
         }
 
         // ######################################

@@ -2,8 +2,13 @@
 
     namespace Simplon\Payment\Provider\PaypalRest\Vo;
 
-    class ChargePayerVo extends \Simplon\Payment\Vo\ChargePayerVo
+    use Simplon\Payment\Iface\ChargePayerVoInterface;
+    use Simplon\Payment\Traits\ChargePayerVoTrait;
+
+    class ChargePayerVo implements ChargePayerVoInterface
     {
+        use ChargePayerVoTrait;
+
         protected $_payMethod;
 
         // ######################################

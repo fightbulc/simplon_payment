@@ -12,7 +12,7 @@
         /**
          * @param mixed $paymentId
          *
-         * @return ChargeVo
+         * @return ChargeExecuteVo
          */
         public function setPaymentId($paymentId)
         {
@@ -36,7 +36,7 @@
         /**
          * @param mixed $payerId
          *
-         * @return ChargePayerVo
+         * @return ChargeExecuteVo
          */
         public function setPayerId($payerId)
         {

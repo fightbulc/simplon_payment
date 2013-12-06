@@ -1,20 +1,35 @@
 <?php
 
-    namespace Simplon\Payment\Vo;
+    namespace Simplon\Payment\Traits;
 
-    use Simplon\Payment\Iface\ChargeResponseVoInterface;
+    use Simplon\Payment\Iface\ChargeVoInterface;
 
-    class ChargeResponseVo extends ChargeVo implements ChargeResponseVoInterface
+    trait ChargeResponseVoTrait
     {
+        protected $_chargeVo;
         protected $_transactionId;
         protected $_status;
 
         // ######################################
 
         /**
+         * @param ChargeVoInterface $chargeVo
+         *
+         * @return static
+         */
+        public function setChargeVo(ChargeVoInterface $chargeVo)
+        {
+            $this->_chargeVo = $chargeVo;
+
+            return $this;
+        }
+
+        // ######################################
+
+        /**
          * @param mixed $status
          *
-         * @return ChargeResponseVo
+         * @return static
          */
         public function setStatus($status)
         {
@@ -38,7 +53,7 @@
         /**
          * @param mixed $transactionId
          *
-         * @return ChargeResponseVo
+         * @return static
          */
         public function setTransactionId($transactionId)
         {

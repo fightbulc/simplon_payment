@@ -2,8 +2,15 @@
 
     namespace Simplon\Payment\Provider\Stripe\Vo;
 
-    class ChargeVo extends \Simplon\Payment\Vo\ChargeVo
+    use Simplon\Payment\Iface\ChargeVoInterface;
+    use Simplon\Payment\Traits\ChargeVoTrait;
+
+    class ChargeVo implements ChargeVoInterface
     {
+        use ChargeVoTrait;
+
+        // ######################################
+
         /**
          * @param ChargePayerVo $chargePayerVo
          *
@@ -11,7 +18,9 @@
          */
         public function setChargePayerVo(ChargePayerVo $chargePayerVo)
         {
-            return parent::setChargePayerVo($chargePayerVo);
+            $this->_chargePayerVo = $chargePayerVo;
+
+            return $this;
         }
 
         // ######################################
@@ -22,5 +31,15 @@
         public function getChargePayerVo()
         {
             return $this->_chargePayerVo;
+        }
+
+        // ######################################
+
+        /**
+         * @return ChargeProductVo[]
+         */
+        public function getChargeProductVoMany()
+        {
+            return $this->_chargeProductVoMany;
         }
     }

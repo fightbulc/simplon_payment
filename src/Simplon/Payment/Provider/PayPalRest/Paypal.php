@@ -2,13 +2,15 @@
 
     namespace Simplon\Payment\Provider\PaypalRest;
 
+    use Simplon\Payment\ChargeStateConstants;
     use Simplon\Payment\PaymentException;
     use Simplon\Payment\PaymentExceptionConstants;
     use Simplon\Payment\Provider\PaypalRest\Vo\ChargeExecuteVo;
+    use Simplon\Payment\Provider\PaypalRest\Vo\ChargeResponseVo;
+    use Simplon\Payment\Provider\PaypalRest\Vo\ChargeValidationResponseVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\ChargeValidationVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\ChargeVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\PaypalAuthVo;
-    use Simplon\Payment\Vo\ChargeResponseVo;
 
     class Paypal
     {
@@ -56,6 +58,60 @@
         // ######################################
 
         /**
+         * @param $paypalState
+         *
+         * @return string
+         */
+        protected function _convertPaypalStateToSimplonState($paypalState)
+        {
+            switch ($paypalState)
+            {
+                case 'created':
+                    $state = ChargeStateConstants::CREATED;
+                    break;
+
+                case 'processing':
+                    $state = ChargeStateConstants::PROCESSING;
+                    break;
+
+                case 'pending':
+                    $state = ChargeStateConstants::PENDING;
+                    break;
+
+                case 'completed':
+                    $state = ChargeStateConstants::COMPLETED;
+                    break;
+
+                case 'failed':
+                    $state = ChargeStateConstants::FAILED;
+                    break;
+
+                case 'refunded':
+                    $state = ChargeStateConstants::REFUNDED;
+                    break;
+
+                case 'partially_refunded':
+                    $state = ChargeStateConstants::REFUNDED;
+                    break;
+
+                case 'rejected':
+                    $state = ChargeStateConstants::REJECTED;
+                    break;
+
+                case 'expired':
+                    $state = ChargeStateConstants::INVALID;
+                    break;
+
+                default:
+                    $state = ChargeStateConstants::UNKNOWN;
+            }
+
+            return $state;
+        }
+
+        // ######################################
+
+        /**
          * @param ChargeVo $chargeVo
          *
          * @return ChargeResponseVo
@@ -70,20 +126,15 @@
             $paypalChargeLinksVo = $paypalChargeVo->getPaypalChargeLinksVo();
 
             $chargeVo
-                ->setUrlApproval($paypalChargeLinksVo->getUrlApproval())
-                ->setPaymentId($paypalChargeVo->getId());
+                ->setPaymentId($paypalChargeVo->getId())
+                ->setUrlApproval($paypalChargeLinksVo->getUrlApproval());
 
-            $simplonChargeStatus = $this->_getPaypalApiInstance()
-                ->convertPaypalStateToSimplonState($paypalChargeVo->getState());
+            $simplonChargeStatus = $this->_convertPaypalStateToSimplonState($paypalChargeVo->getState());
 
             // ----------------------------------
 
             return (new ChargeResponseVo())
-                ->setReferenceId($chargeVo->getReferenceId())
-                ->setDescription($chargeVo->getDescription())
-                ->setCurrency($chargeVo->getCurrency())
-                ->setChargePayerVo($chargeVo->getChargePayerVo())
-                ->setChargeProductVoMany($chargeVo->getChargeProductVoMany())
+                ->setChargeVo($chargeVo)
                 ->setStatus($simplonChargeStatus);
         }
 
@@ -110,8 +161,7 @@
 
             if ($paypalSaleVo !== FALSE)
             {
-                $simplonState = $this->_getPaypalApiInstance()
-                    ->convertPaypalStateToSimplonState($paypalSaleVo->getState());
+                $simplonState = $this->_convertPaypalStateToSimplonState($paypalSaleVo->getState());
 
                 return (new ChargeResponseVo())
                     ->setTransactionId($paypalSaleVo->getId())
@@ -142,12 +192,15 @@
 
             if ($validationResponse === TRUE)
             {
-                $transactionId = $paypalChargeVo
+                $paypalSaleVo = $paypalChargeVo
                     ->getPaypalChargeTransactionVoMany()[0]
-                    ->getPaypalSaleVo()
-                    ->getId();
+                    ->getPaypalSaleVo();
 
-                return (new ChargeResponseVo())->setTransactionId($transactionId);
+                $simplonState = $this->_convertPaypalStateToSimplonState($paypalSaleVo->getState());
+
+                return (new ChargeValidationResponseVo())
+                    ->setTransactionId($paypalSaleVo->getId())
+                    ->setStatus($simplonState);
             }
 
             // ----------------------------------

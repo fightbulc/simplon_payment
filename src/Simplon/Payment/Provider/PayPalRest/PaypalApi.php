@@ -2,7 +2,6 @@
 
     namespace Simplon\Payment\Provider\PaypalRest;
 
-    use Simplon\Payment\ChargeStateConstants;
     use Simplon\Payment\PaymentHelper;
     use Simplon\Payment\Provider\PaypalRest\Vo\ChargeExecuteVo;
     use Simplon\Payment\Provider\PaypalRest\Vo\ChargePayerVo;
@@ -50,52 +49,6 @@
         {
             return $this->_getAuthVo()
                 ->getSandbox();
-        }
-
-        // ######################################
-
-        /**
-         * @param $paypalState
-         *
-         * @return string
-         */
-        public function convertPaypalStateToSimplonState($paypalState)
-        {
-            switch ($paypalState)
-            {
-                case 'created':
-                    $state = ChargeStateConstants::CREATED;
-                    break;
-
-                case 'approved':
-                    $state = ChargeStateConstants::APPROVED;
-                    break;
-
-                case 'pending':
-                    $state = ChargeStateConstants::PENDING;
-                    break;
-
-                case 'completed':
-                    $state = ChargeStateConstants::COMPLETED;
-                    break;
-
-                case 'failed':
-                    $state = ChargeStateConstants::FAILED;
-                    break;
-
-                case 'canceled':
-                    $state = ChargeStateConstants::INVALID;
-                    break;
-
-                case 'expired':
-                    $state = ChargeStateConstants::INVALID;
-                    break;
-
-                default:
-                    $state = ChargeStateConstants::UNKNOWN;
-            }
-
-            return $state;
         }
 
         // ######################################

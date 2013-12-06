@@ -2,8 +2,10 @@
 
     namespace Simplon\Payment\Iface;
 
-    interface ChargeResponseVoInterface extends ChargeVoInterface
+    interface ChargeResponseVoInterface
     {
+        public function getChargeVo();
+
         public function getTransactionId();
 
         public function getStatus();

@@ -1,10 +1,8 @@
 <?php
 
-    namespace Simplon\Payment\Vo;
+    namespace Simplon\Payment\Traits;
 
-    use Simplon\Payment\Iface\ChargePayerVoInterface;
-
-    class ChargePayerVo implements ChargePayerVoInterface
+    trait ChargePayerVoTrait
     {
         protected $_name;
         protected $_email;
@@ -14,7 +12,7 @@
         /**
          * @param mixed $email
          *
-         * @return ChargePayerVo
+         * @return static
          */
         public function setEmail($email)
         {
@@ -38,7 +36,7 @@
         /**
          * @param mixed $name
          *
-         * @return ChargePayerVo
+         * @return static
          */
         public function setName($name)
         {

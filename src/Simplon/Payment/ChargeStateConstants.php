@@ -10,5 +10,8 @@
         CONST COMPLETED = 'completed';
         CONST FAILED = 'failed';
         CONST INVALID = 'invalid';
+        CONST REJECTED = 'rejected';
+        CONST REFUNDED = 'refunded';
+        CONST PROCESSING = 'processing';
         CONST UNKNOWN = 'unknown';
     }

@@ -4,12 +4,12 @@
 
     use Simplon\Payment\ChargeStateConstants;
     use Simplon\Payment\Provider\Stripe\Vo\ChargePayerVo;
+    use Simplon\Payment\Provider\Stripe\Vo\ChargeResponseVo;
     use Simplon\Payment\Provider\Stripe\Vo\ChargeVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeAuthVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeCardVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeChargeVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeCustomerVo;
-    use Simplon\Payment\Vo\ChargeResponseVo;
 
     class Stripe
     {
@@ -71,7 +71,7 @@
         /**
          * @param ChargeVo $chargeVo
          *
-         * @return \Simplon\Payment\Vo\ChargeProductVo[]
+         * @return Vo\ChargeProductVo[]
          */
         protected function _getChargeProductVoMany(ChargeVo $chargeVo)
         {
@@ -162,16 +162,15 @@
 
             // ----------------------------------
 
+            // update payer data
+            $chargeVo->setChargePayerVo($chargePayerVo);
+
             // determine state
             $chargeState = $stripeChargeVo->getPaid() === TRUE ? ChargeStateConstants::COMPLETED : ChargeStateConstants::FAILED;
 
             // create chargeResponseVo
             $chargeResponseVo = (new ChargeResponseVo())
-                ->setReferenceId($chargeVo->getReferenceId())
-                ->setDescription($chargeVo->getDescription())
-                ->setCurrency($chargeVo->getCurrency())
-                ->setChargePayerVo($chargePayerVo)
-                ->setChargeProductVoMany($chargeVo->getChargeProductVoMany())
+                ->setChargeVo($chargeVo)
                 ->setTransactionId($stripeChargeVo->getId())
                 ->setStatus($chargeState);
 

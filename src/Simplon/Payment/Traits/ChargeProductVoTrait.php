@@ -1,10 +1,8 @@
 <?php
 
-    namespace Simplon\Payment\Vo;
+    namespace Simplon\Payment\Traits;
 
-    use Simplon\Payment\Iface\ChargeProductVoInterface;
-
-    class ChargeProductVo implements ChargeProductVoInterface
+    trait ChargeProductVoTrait
     {
         protected $_referenceId;
         protected $_name;
@@ -20,7 +18,7 @@
         /**
          * @param mixed $name
          *
-         * @return ChargeProductVo
+         * @return ChargeProductVoTrait
          */
         public function setName($name)
         {
@@ -44,7 +42,7 @@
         /**
          * @param mixed $priceCents
          *
-         * @return ChargeProductVo
+         * @return ChargeProductVoTrait
          */
         public function setPriceCents($priceCents)
         {
@@ -68,7 +66,7 @@
         /**
          * @param mixed $priceVat
          *
-         * @return ChargeProductVo
+         * @return ChargeProductVoTrait
          */
         public function setPriceVat($priceVat)
         {
@@ -92,7 +90,7 @@
         /**
          * @param bool $priceIncludesVat
          *
-         * @return ChargeProductVo
+         * @return ChargeProductVoTrait
          */
         public function setPriceIncludesVat($priceIncludesVat = TRUE)
         {
@@ -190,7 +188,7 @@
         /**
          * @param mixed $referenceId
          *
-         * @return ChargeProductVo
+         * @return ChargeProductVoTrait
          */
         public function setReferenceId($referenceId)
         {
@@ -214,7 +212,7 @@
         /**
          * @param mixed $surchargeCents
          *
-         * @return ChargeProductVo
+         * @return ChargeProductVoTrait
          */
         public function setSurchargeCents($surchargeCents)
         {
@@ -238,7 +236,7 @@
         /**
          * @param mixed $surchargeVat
          *
-         * @return ChargeProductVo
+         * @return ChargeProductVoTrait
          */
         public function setSurchargeVat($surchargeVat)
         {
@@ -262,7 +260,7 @@
         /**
          * @param bool $surchargeIncludesVat
          *
-         * @return ChargeProductVo
+         * @return ChargeProductVoTrait
          */
         public function setSurchargeIncludesVat($surchargeIncludesVat = TRUE)
         {
