@@ -45,10 +45,7 @@
         {
             if (!$this->_stripeApiInstance)
             {
-                $privateApiKey = $this->_getAuthVo()
-                    ->getPrivateKey();
-
-                $this->_stripeApiInstance = new StripeApi($privateApiKey);
+                $this->_stripeApiInstance = new StripeApi($this->_getAuthVo());
             }
 
             return $this->_stripeApiInstance;

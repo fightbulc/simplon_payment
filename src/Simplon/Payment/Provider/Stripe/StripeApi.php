@@ -2,6 +2,7 @@
 
     namespace Simplon\Payment\Provider\Stripe;
 
+    use Simplon\Payment\Provider\Stripe\Vo\StripeAuthVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeCardVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeChargeVo;
     use Simplon\Payment\Provider\Stripe\Vo\StripeCustomerCardsListVo;
@@ -11,11 +12,11 @@
     class StripeApi
     {
         /**
-         * @param $privateApiKey
+         * @param StripeAuthVo $stripeAuthVo
          */
-        public function __construct($privateApiKey)
+        public function __construct(StripeAuthVo $stripeAuthVo)
         {
-            StripeApiRequests::setApiKey($privateApiKey);
+            StripeApiRequests::setApiKey($stripeAuthVo->getPrivateKey());
         }
 
         // ######################################
