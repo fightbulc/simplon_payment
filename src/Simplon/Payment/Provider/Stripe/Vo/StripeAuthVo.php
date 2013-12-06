@@ -3,9 +3,8 @@
     namespace Simplon\Payment\Provider\Stripe\Vo;
 
     use Simplon\Helper\VoSetDataFactory;
-    use Simplon\Payment\Iface\ProviderAuthInterface;
 
-    class StripeAuthVo implements ProviderAuthInterface
+    class StripeAuthVo
     {
         protected $_publicKey;
         protected $_privateKey;

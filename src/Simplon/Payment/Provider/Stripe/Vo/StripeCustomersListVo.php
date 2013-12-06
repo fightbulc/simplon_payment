@@ -38,6 +38,34 @@
         // ######################################
 
         /**
+         * @return StripeCustomerVo[]
+         */
+        public function getStripeCustomerVoMany()
+        {
+            if (!$this->_stripeCustomerVoMany)
+            {
+                $this->_stripeCustomerVoMany = VoManyFactory::factory($this->getDataMany(), function ($key, $val)
+                {
+                    return (new StripeCustomerVo())->setData($val);
+                });
+            }
+
+            return $this->_stripeCustomerVoMany;
+        }
+
+        // ######################################
+
+        /**
+         * @return mixed
+         */
+        public function getDataMany()
+        {
+            return $this->_dataMany;
+        }
+
+        // ######################################
+
+        /**
          * @param mixed $stripeCardDataMany
          *
          * @return StripeCustomersListVo
@@ -54,27 +82,9 @@
         /**
          * @return mixed
          */
-        public function getDataMany()
+        public function getCount()
         {
-            return $this->_dataMany;
-        }
-
-        // ######################################
-
-        /**
-         * @return StripeCustomerVo[]
-         */
-        public function getStripeCustomerVoMany()
-        {
-            if (!$this->_stripeCustomerVoMany)
-            {
-                $this->_stripeCustomerVoMany = VoManyFactory::factory($this->getDataMany(), function ($key, $val)
-                {
-                    return (new StripeCustomerVo())->setData($val);
-                });
-            }
-
-            return $this->_stripeCustomerVoMany;
+            return $this->_count;
         }
 
         // ######################################
@@ -96,9 +106,9 @@
         /**
          * @return mixed
          */
-        public function getCount()
+        public function getObject()
         {
-            return $this->_count;
+            return $this->_object;
         }
 
         // ######################################
@@ -120,9 +130,9 @@
         /**
          * @return mixed
          */
-        public function getObject()
+        public function getUrl()
         {
-            return $this->_object;
+            return $this->_url;
         }
 
         // ######################################
@@ -137,15 +147,5 @@
             $this->_url = $url;
 
             return $this;
-        }
-
-        // ######################################
-
-        /**
-         * @return mixed
-         */
-        public function getUrl()
-        {
-            return $this->_url;
         }
     } 

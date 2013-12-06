@@ -3,9 +3,8 @@
     namespace Simplon\Payment\Provider\PaypalAdaptive\Vo;
 
     use Simplon\Helper\VoSetDataFactory;
-    use Simplon\Payment\Iface\ProviderAuthInterface;
 
-    class PaypalAuthVo implements ProviderAuthInterface
+    class PaypalAuthVo
     {
         /** @var String */
         protected $_username;
