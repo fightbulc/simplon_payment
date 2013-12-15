@@ -27,7 +27,7 @@
             ],
             'classic' => [
                 'test' => [
-                    'username'  => ',
+                    'username'  => '',
                     'password'  => '',
                     'signature' => '',
                     'email'     => '', // for mobile

@@ -45,6 +45,9 @@
     "autoload": {
         "psr-0": {
             "Simplon\\Payment": "src/"
-        }
+        },
+        "classmap" : [
+            "src/Simplon/Payment/Provider/IcePayIdeal/Api"
+        ]
     }
 }
