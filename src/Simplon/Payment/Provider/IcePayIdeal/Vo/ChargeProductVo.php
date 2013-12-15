@@ -1,6 +1,6 @@
 <?php
 
-    namespace Simplon\Payment\Provider\IcePayIdeal\Vo;
+    namespace Simplon\Payment\Provider\IcepayIdeal\Vo;
 
     use Simplon\Payment\Iface\ChargeProductVoInterface;
     use Simplon\Payment\Traits\ChargeProductVoTrait;

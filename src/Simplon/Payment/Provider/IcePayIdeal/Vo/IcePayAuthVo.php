@@ -1,10 +1,10 @@
 <?php
 
-    namespace Simplon\Payment\Provider\IcePayIdeal\Vo;
+    namespace Simplon\Payment\Provider\IcepayIdeal\Vo;
 
     use Simplon\Helper\VoSetDataFactory;
 
-    class IcePayAuthVo
+    class IcepayAuthVo
     {
         protected $_merchantId;
         protected $_secretCode;
@@ -14,7 +14,7 @@
         /**
          * @param array $data
          *
-         * @return IcePayAuthVo
+         * @return IcepayAuthVo
          */
         public function setData(array $data)
         {
@@ -32,7 +32,7 @@
         /**
          * @param mixed $merchantId
          *
-         * @return IcePayAuthVo
+         * @return IcepayAuthVo
          */
         public function setMerchantId($merchantId)
         {
@@ -56,7 +56,7 @@
         /**
          * @param mixed $secretCode
          *
-         * @return IcePayAuthVo
+         * @return IcepayAuthVo
          */
         public function setSecretCode($secretCode)
         {

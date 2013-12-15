@@ -1,6 +1,6 @@
 <?php
 
-    namespace Simplon\Payment\Provider\IcePayIdeal\Vo;
+    namespace Simplon\Payment\Provider\IcepayIdeal\Vo;
 
     use Simplon\Payment\Iface\ChargeVoInterface;
     use Simplon\Payment\Traits\ChargeVoTrait;
@@ -12,18 +12,19 @@
         protected $_issuer;
         protected $_countryCode;
         protected $_languageCode;
-        protected $_urlApproval;
+        protected $_urlSuccess;
+        protected $_urlError;
 
         // ######################################
 
         /**
-         * @param mixed $urlApproval
+         * @param mixed $urlError
          *
          * @return ChargeVo
          */
-        public function setUrlApproval($urlApproval)
+        public function setUrlError($urlError)
         {
-            $this->_urlApproval = $urlApproval;
+            $this->_urlError = $urlError;
 
             return $this;
         }
@@ -33,9 +34,33 @@
         /**
          * @return string
          */
-        public function getUrlApproval()
+        public function getUrlError()
         {
-            return (string)$this->_urlApproval;
+            return (string)$this->_urlError;
+        }
+
+        // ######################################
+
+        /**
+         * @param mixed $urlSuccess
+         *
+         * @return ChargeVo
+         */
+        public function setUrlSuccess($urlSuccess)
+        {
+            $this->_urlSuccess = $urlSuccess;
+
+            return $this;
+        }
+
+        // ######################################
+
+        /**
+         * @return string
+         */
+        public function getUrlSuccess()
+        {
+            return (string)$this->_urlSuccess;
         }
 
         // ######################################
