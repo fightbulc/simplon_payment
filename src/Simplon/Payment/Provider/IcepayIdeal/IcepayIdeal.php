@@ -79,7 +79,7 @@
         /**
          * @param array $getData
          *
-         * @return bool
+         * @return bool|ChargeSuccessVo
          */
         public function isValidCheckout(array $getData)
         {
