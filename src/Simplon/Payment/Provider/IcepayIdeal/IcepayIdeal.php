@@ -4,6 +4,7 @@
 
     use Simplon\Payment\Provider\IcepayIdeal\Vo\ChargePostbackVo;
     use Simplon\Payment\Provider\IcepayIdeal\Vo\ChargeResponseVo;
+    use Simplon\Payment\Provider\IcepayIdeal\Vo\ChargeSuccessVo;
     use Simplon\Payment\Provider\IcepayIdeal\Vo\ChargeVo;
     use Simplon\Payment\Provider\IcepayIdeal\Vo\IcepayAuthVo;
 
@@ -76,45 +77,48 @@
         // ######################################
 
         /**
-         * @return bool|ChargePostbackVo
+         * @param array $getData
+         *
+         * @return bool
          */
-        public function isValidPostback()
+        public function isValidCheckout(array $getData)
         {
             $authVo = $this->_getAuthVo();
 
-            $api = (new \Icepay_Postback())
-                ->setMerchantID($authVo->getMerchantId())
-                ->setSecretCode($authVo->getSecretCode());
+            // set vo
+            $chargeSuccessVo = new ChargeSuccessVo($getData);
 
-            // validates the POST data
-            $isValid = $api->validate();
-
-            // ----------------------------------
+            // is valid data
+            $isValid = $chargeSuccessVo->isValidChecksum($authVo->getSecretCode());
 
             if ($isValid !== FALSE)
             {
-                $postbackObj = $api->getPostback();
+                return $chargeSuccessVo;
+            }
 
-                return (new ChargePostbackVo())
-                    ->setStatus($postbackObj->status)
-                    ->setStatusCode($postbackObj->statusCode)
-                    ->setMerchant($postbackObj->merchant)
-                    ->setOrderId($postbackObj->orderID)
-                    ->setPaymentId($postbackObj->paymentID)
-                    ->setReference($postbackObj->reference)
-                    ->setTransactionId($postbackObj->transactionID)
-                    ->setConsumerName($postbackObj->consumerName)
-                    ->setConsumerAccountNumber($postbackObj->consumerAccountNumber)
-                    ->setConsumerAddress($postbackObj->consumerAddress)
-                    ->setConsumerHouseNumber($postbackObj->consumerHouseNumber)
-                    ->setConsumerCity($postbackObj->consumerCity)
-                    ->setConsumerCountry($postbackObj->consumerCountry)
-                    ->setConsumerEmail($postbackObj->consumerEmail)
-                    ->setConsumerPhoneNumber($postbackObj->consumerPhoneNumber)
-                    ->setConsumerIpAddress($postbackObj->consumerIPAdress)
-                    ->setAmountCents($postbackObj->amount)
-                    ->setProcessDuration($postbackObj->duration)
-                    ->setPaymentMethod($postbackObj->paymentMethod);
+            return FALSE;
+        }
+
+        // ######################################
+
+        /**
+         * @param array $postData
+         *
+         * @return bool|ChargePostbackVo
+         */
+        public function isValidPostback(array $postData)
+        {
+            $authVo = $this->_getAuthVo();
+
+            // set vo
+            $chargePostbackVo = new ChargePostbackVo($postData);
+
+            // is valid data
+            $isValid = $chargePostbackVo->isValidChecksum($authVo->getSecretCode());
+
+            if ($isValid !== FALSE)
+            {
+                return $chargePostbackVo;
             }
 
             return FALSE;

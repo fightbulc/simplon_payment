@@ -2,11 +2,14 @@
 
     namespace Simplon\Payment\Provider\IcepayIdeal\Vo;
 
+    use Simplon\Helper\VoSetDataFactory;
+    use Simplon\Payment\ChargeStateConstants;
+
     class ChargePostbackVo
     {
         protected $_status;
         protected $_statusCode;
-        protected $_merchant;
+        protected $_merchantId;
         protected $_orderId;
         protected $_paymentId;
         protected $_reference;
@@ -24,6 +27,94 @@
         protected $_currency;
         protected $_processDuration;
         protected $_paymentMethod;
+        protected $_checksum;
+
+        // ######################################
+
+        /**
+         * @param array $data
+         */
+        public function __construct(array $data)
+        {
+            (new VoSetDataFactory())
+                ->setRawData($data)
+                ->setConditionByKey('status', function ($val) { $this->setStatus($val); })
+                ->setConditionByKey('statusCode', function ($val) { $this->setStatusCode($val); })
+                ->setConditionByKey('merchant', function ($val) { $this->setMerchantId($val); })
+                ->setConditionByKey('orderID', function ($val) { $this->setOrderId($val); })
+                ->setConditionByKey('paymentID', function ($val) { $this->setPaymentId($val); })
+                ->setConditionByKey('reference', function ($val) { $this->setReference($val); })
+                ->setConditionByKey('transactionID', function ($val) { $this->setTransactionId($val); })
+                ->setConditionByKey('consumerName', function ($val) { $this->setConsumerName($val); })
+                ->setConditionByKey('consumerAccountName', function ($val) { $this->setConsumerAccountNumber($val); })
+                ->setConditionByKey('consumerAddress', function ($val) { $this->setConsumerAddress($val); })
+                ->setConditionByKey('consumerHouseNumber', function ($val) { $this->setConsumerHouseNumber($val); })
+                ->setConditionByKey('consumerCity', function ($val) { $this->setConsumerCity($val); })
+                ->setConditionByKey('consumerCountry', function ($val) { $this->setConsumerCountry($val); })
+                ->setConditionByKey('consumerEmail', function ($val) { $this->setConsumerEmail($val); })
+                ->setConditionByKey('consumerPhoneNumber', function ($val) { $this->setConsumerPhoneNumber($val); })
+                ->setConditionByKey('consumerIPAddress', function ($val) { $this->setConsumerIpAddress($val); })
+                ->setConditionByKey('amount', function ($val) { $this->setAmountCents($val); })
+                ->setConditionByKey('currency', function ($val) { $this->setCurrency($val); })
+                ->setConditionByKey('duration', function ($val) { $this->setProcessDuration($val); })
+                ->setConditionByKey('paymentMethod', function ($val) { $this->setPaymentMethod($val); })
+                ->setConditionByKey('checksum', function ($val) { $this->setChecksum($val); })
+                ->run();
+        }
+
+        // ######################################
+
+        /**
+         * @param $secretCode
+         *
+         * @return bool
+         */
+        public function isValidChecksum($secretCode)
+        {
+            $checksum = sha1(
+                sprintf(
+                    "%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s",
+                    $secretCode,
+                    $this->getMerchantId(),
+                    $this->getStatus(),
+                    $this->getStatusCode(),
+                    $this->getOrderId(),
+                    $this->getPaymentId(),
+                    $this->getReference(),
+                    $this->getTransactionId(),
+                    $this->getAmountCents(),
+                    $this->getCurrency(),
+                    $this->getProcessDuration(),
+                    $this->getConsumerIpAddress()
+                )
+            );
+
+            return $checksum === $this->getChecksum();
+        }
+
+        // ######################################
+
+        /**
+         * @param mixed $checksum
+         *
+         * @return ChargePostbackVo
+         */
+        public function setChecksum($checksum)
+        {
+            $this->_checksum = $checksum;
+
+            return $this;
+        }
+
+        // ######################################
+
+        /**
+         * @return string
+         */
+        public function getChecksum()
+        {
+            return (string)$this->_checksum;
+        }
 
         // ######################################
 
@@ -296,9 +387,9 @@
          *
          * @return ChargePostbackVo
          */
-        public function setMerchant($merchant)
+        public function setMerchantId($merchant)
         {
-            $this->_merchant = $merchant;
+            $this->_merchantId = $merchant;
 
             return $this;
         }
@@ -308,9 +399,9 @@
         /**
          * @return int
          */
-        public function getMerchant()
+        public function getMerchantId()
         {
-            return (int)$this->_merchant;
+            return (int)$this->_merchantId;
         }
 
         // ######################################
@@ -460,6 +551,34 @@
         // ######################################
 
         /**
+         * @return string
+         */
+        public function getSimplonChargeStatus()
+        {
+            switch ($this->getStatus())
+            {
+                case \Icepay_StatusCode::OPEN:
+                    $newStatus = ChargeStateConstants::PENDING;
+                    break;
+
+                // ------------------------------
+
+                case \Icepay_StatusCode::SUCCESS:
+                    $newStatus = ChargeStateConstants::COMPLETED;
+                    break;
+
+                // ------------------------------
+
+                default:
+                    $newStatus = ChargeStateConstants::FAILED;
+            }
+
+            return $newStatus;
+        }
+
+        // ######################################
+
+        /**
          * @param mixed $statusCode
          *
          * @return ChargePostbackVo
@@ -498,10 +617,10 @@
         // ######################################
 
         /**
-         * @return int
+         * @return string
          */
         public function getTransactionId()
         {
-            return (int)$this->_transactionId;
+            return (string)$this->_transactionId;
         }
     } 
