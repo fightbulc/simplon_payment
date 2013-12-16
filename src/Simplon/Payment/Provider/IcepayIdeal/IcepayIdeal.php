@@ -2,6 +2,9 @@
 
     namespace Simplon\Payment\Provider\IcepayIdeal;
 
+    use Simplon\Payment\ChargeStateConstants;
+    use Simplon\Payment\PaymentException;
+    use Simplon\Payment\PaymentExceptionConstants;
     use Simplon\Payment\Provider\IcepayIdeal\Vo\ChargePostbackVo;
     use Simplon\Payment\Provider\IcepayIdeal\Vo\ChargeResponseVo;
     use Simplon\Payment\Provider\IcepayIdeal\Vo\ChargeSuccessVo;
@@ -39,6 +42,7 @@
          * @param ChargeVo $chargeVo
          *
          * @return ChargeResponseVo
+         * @throws \Simplon\Payment\PaymentException
          */
         public function authoriseCharge(ChargeVo $chargeVo)
         {
@@ -56,22 +60,35 @@
 
             $authVo = $this->_getAuthVo();
 
-            $transactionObject = (new \Icepay_Api_Webservice())
-                ->paymentService()
-                ->setMerchantID($authVo->getMerchantId())
-                ->setSecretCode($authVo->getSecretCode())
-                ->setSuccessURL($chargeVo->getUrlSuccess())
-                ->setErrorURL($chargeVo->getUrlError())
-                ->checkOut($paymentObj);
+            try
+            {
+                $transactionObject = (new \Icepay_Api_Webservice())
+                    ->paymentService()
+                    ->setMerchantID($authVo->getMerchantId())
+                    ->setSecretCode($authVo->getSecretCode())
+                    ->setSuccessURL($chargeVo->getUrlSuccess())
+                    ->setErrorURL($chargeVo->getUrlError())
+                    ->checkOut($paymentObj);
 
-            // ----------------------------------
+                $chargeResponseVo = (new ChargeResponseVo())
+                    ->setPaymentId($transactionObject->getPaymentID())
+                    ->setUrlApproval($transactionObject->getPaymentScreenURL())
+                    ->setChargeVo($chargeVo)
+                    ->setStatus(ChargeStateConstants::CREATED);
 
-            $chargeResponseVo = (new ChargeResponseVo())
-                ->setPaymentId($transactionObject->getPaymentID())
-                ->setUrlApproval($transactionObject->getPaymentScreenURL())
-                ->setChargeVo($chargeVo);
-
-            return $chargeResponseVo;
+                return $chargeResponseVo;
+            }
+            catch (\Exception $e)
+            {
+                throw new PaymentException(
+                    PaymentExceptionConstants::ERR_REQUEST_CODE,
+                    PaymentExceptionConstants::ERR_REQUEST_MESSAGE,
+                    [
+                        'provider' => 'Icepay Ideal',
+                        'message'  => $e->getMessage(),
+                    ]
+                );
+            }
         }
 
         // ######################################

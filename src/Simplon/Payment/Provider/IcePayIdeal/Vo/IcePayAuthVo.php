@@ -21,7 +21,7 @@
             (new VoSetDataFactory())
                 ->setRawData($data)
                 ->setConditionByKey('merchantId', function ($val) { $this->setMerchantId($val); })
-                ->setConditionByKey('secret', function ($val) { $this->setSecretCode($val); })
+                ->setConditionByKey('secretCode', function ($val) { $this->setSecretCode($val); })
                 ->run();
 
             return $this;
