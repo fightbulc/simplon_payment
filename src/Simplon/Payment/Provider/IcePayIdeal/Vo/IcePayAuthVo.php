@@ -8,6 +8,7 @@
     {
         protected $_merchantId;
         protected $_secretCode;
+        protected $_callbackKey;
 
         // ######################################
 
@@ -22,9 +23,34 @@
                 ->setRawData($data)
                 ->setConditionByKey('merchantId', function ($val) { $this->setMerchantId($val); })
                 ->setConditionByKey('secretCode', function ($val) { $this->setSecretCode($val); })
+                ->setConditionByKey('callbackKey', function ($val) { $this->setCallbackKey($val); })
                 ->run();
 
             return $this;
+        }
+
+        // ######################################
+
+        /**
+         * @param mixed $callbackKey
+         *
+         * @return IcepayAuthVo
+         */
+        public function setCallbackKey($callbackKey)
+        {
+            $this->_callbackKey = $callbackKey;
+
+            return $this;
+        }
+
+        // ######################################
+
+        /**
+         * @return string
+         */
+        public function getCallbackKey()
+        {
+            return (string)$this->_callbackKey;
         }
 
         // ######################################
