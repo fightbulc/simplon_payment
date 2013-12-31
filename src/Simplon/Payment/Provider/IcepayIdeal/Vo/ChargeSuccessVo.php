@@ -255,7 +255,7 @@
          */
         public function getStatusCode()
         {
-            return (string)$this->_statusCode;
+            return (string)urldecode($this->_statusCode);
         }
 
         // ######################################
