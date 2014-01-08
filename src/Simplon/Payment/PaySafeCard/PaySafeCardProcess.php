@@ -11,7 +11,7 @@
         {
             $processPaySafeCardVo = new ProcessPaySafeCardVo($data);
 
-            return (new SOPGClassicMerchantClient($this->_endPoint))->executeDebit(
+            return (new SOPGClassicMerchantClient($processPaySafeCardVo->getEndPoint()))->executeDebit(
                 $processPaySafeCardVo->getUsername(),
                 $processPaySafeCardVo->getPassword(),
                 $processPaySafeCardVo->getMtid(),
