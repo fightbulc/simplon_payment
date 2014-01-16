@@ -166,18 +166,21 @@
 
             // ------------------------------
 
-            $expectedTransactionStatus = 'COMPLETED';
+            $validStates = [
+                'COMPLETED',
+                'PENDING',
+            ];
 
-            $validSenderTransactionStatus = PaymentHelper::isStringEqual(
-                $expectedTransactionStatus,
-                $paypalChargePaymentInfoVo->getSenderTransactionStatus()
+            $validSenderTransactionStatus = \in_array(
+                strtoupper($paypalChargePaymentInfoVo->getSenderTransactionStatus()),
+                $validStates
             );
 
             if ($validSenderTransactionStatus === FALSE)
             {
                 return PaymentHelper::createErrorMessage(
-                    "Transaction status doesn't match up",
-                    $expectedTransactionStatus,
+                    "Transaction status unexceptable",
+                    join(', ', $validStates),
                     $paypalChargePaymentInfoVo->getSenderTransactionStatus()
                 );
             }
